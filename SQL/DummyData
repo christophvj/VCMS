@@ -5,6 +5,7 @@ INSERT INTO Role (Name) VALUES
 ('Admin'),
 ('Volunteer'),
 ('Donor');
+GO
 
 -- Insert Users
 INSERT INTO Users (Name, Surname, Email, PhoneNumber, Password) VALUES
@@ -12,6 +13,7 @@ INSERT INTO Users (Name, Surname, Email, PhoneNumber, Password) VALUES
 ('Bob', 'Jones', 'bob.volunteer@example.com', '0722222222', 'vol123'),   -- Volunteer
 ('Charlie', 'Brown', 'charlie.donor@example.com', '0733333333', 'don123'), -- Donor
 ('Diana', 'White', 'diana.both@example.com', '0744444444', 'both123');   -- Volunteer + Donor
+GO
 
 -- Links Users to Role
 INSERT INTO User_Role (UserID, RoleID) VALUES
@@ -20,6 +22,7 @@ INSERT INTO User_Role (UserID, RoleID) VALUES
 (3, 3), -- Charlie -> Donor
 (4, 2), -- Diana -> Volunteer
 (4, 3); -- Diana -> Donor
+GO
 
 -- Insert Skills 
 INSERT INTO Skill (Description) VALUES
@@ -33,6 +36,7 @@ INSERT INTO Skill (Description) VALUES
 ('Counselor'),
 ('Logistics'),
 ('Photographer');
+GO
 
 -- Assign Skill to Users
 INSERT INTO Skill_On_User (UserID, SkillID) VALUES
@@ -40,30 +44,35 @@ INSERT INTO Skill_On_User (UserID, SkillID) VALUES
 (2, 3), -- Bob is Cook
 (2, 4), -- Bob is Driver
 (4, 9); -- Diana is Logistics
+GO
 
 -- Insert Beneficiaries
 INSERT INTO Beneficiary (Name, AmountReceived) VALUES
 ('Hope Shelter', 0.00),
 ('Food Bank', 0.00),
 ('Youth Center', 0.00);
+GO
 
 -- Insert Events
 INSERT INTO Event (Name, Description, Location, StartDate, EndDate) VALUES
 ('Charity Run', 'A 10km run to raise funds for Hope Shelter.', 'City Park', '2025-02-01', '2025-02-01'),
 ('Food Drive', 'Collecting non-perishable items for Food Bank.', 'Community Hall', '2025-03-10', '2025-03-12'),
 ('Youth Workshop', 'Workshops and activities for the local Youth Center.', 'Youth Hall', '2025-04-05', '2025-04-05');
+GO
 
 -- Link Beneficiary to Event
 INSERT INTO Beneficiary_On_Event (BeneficiaryID, EventID) VALUES
 (1, 1), -- Hope Shelter gets Charity Run
 (2, 2), -- Food Bank gets Food Drive
 (3, 3); -- Youth Center gets Youth Workshop
+GO
 
 -- Assign Users to Events (volunteering work)
 INSERT INTO User_On_Event (UserID, EventID, SkillID, WorkHours) VALUES
 (2, 1, 1, 5.0),  -- Bob works as Medic at Charity Run
 (2, 2, 3, 4.0),  -- Bob works as Cook at Food Drive
 (4, 3, 9, 3.0);  -- Diana works as Logistics at Youth Workshop
+GO
 
 -- Insert Donations
 INSERT INTO Donation (UserID, EventID, Amount, Donation_Date) VALUES
@@ -71,3 +80,4 @@ INSERT INTO Donation (UserID, EventID, Amount, Donation_Date) VALUES
 (4, 1, 1000.00, '2025-02-01'), -- Diana donates to Charity Run
 (3, 2, 300.00, '2025-03-11'), -- Charlie donates to Food Drive
 (4, 3, 750.00, '2025-04-05'); -- Diana donates to Youth Workshop
+GO
