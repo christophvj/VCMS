@@ -7,15 +7,21 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+
 namespace VCMS
 {
     public partial class CreateAccount : System.Web.UI.Page
     {
+
+       
+
         protected void Page_Load(object sender, EventArgs e)
         {
             // Hide inormation message
             lblMessage.Visible = false;
         }
+
+        DataBaseControls db = new DataBaseControls();
 
         private String name;
         private String surname;
@@ -25,11 +31,21 @@ namespace VCMS
 
         public void getUserInput()
         {
-            txtName.Text = name;
-            txtSurname.Text = surname;
-            txtEmail.Text = email;
-            txtPhoneNumber.Text = phoneNumber;
-            txtPassword.Text = password;
+            name = txtName.Text;
+            surname = txtSurname.Text;
+            email = txtEmail.Text;
+            phoneNumber = txtPhoneNumber.Text;
+            password = txtPassword.Text;
+        }
+
+        private void ClearInputFields()
+        {
+            // Clear all input fields
+            txtName.Text = string.Empty;
+            txtSurname.Text = string.Empty;
+            txtEmail.Text = string.Empty;
+            txtPhoneNumber.Text = string.Empty;
+            txtPassword.Text = string.Empty;
         }
 
         protected void btnSignUp_Click(object sender, EventArgs e)
@@ -38,21 +54,26 @@ namespace VCMS
             getUserInput();
 
             // Validate User Account Existence
-            //if (db.EmailExists())
-            //{
-            //    lblMessage.Visible = true;
-            //    lblMessage.BackColor = System.Drawing.Color.Red;
-            //    lblMessage.Text = "An account with this email already exists.";
-            //    return;
-            //}
-            //else
-            //{
-                // Insert user input into the database
-                // Success message 
-              //  lblMessage.Visible = true;
-              //  lblMessage.BackColor = System.Drawing.Color.Green;
-               // lblMessage.Text = "Account created successfully.";
-            //}
+            if (db.EmailExists(email))
+            {
+                lblMessage.Visible = true;
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.Text = "An account with this email already exists.";
+                ClearInputFields();
+                return;
+            }
+            else
+            {
+                //Insert user input into the database
+                db.CreateUser(name, surname, email, phoneNumber, password);
+
+                //Success message 
+                lblMessage.Visible = true;
+                lblMessage.ForeColor = System.Drawing.Color.Green;
+                lblMessage.Text = "Account created successfully.";
+
+                ClearInputFields();
+            }
         }
     }
 }
