@@ -64,12 +64,20 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Browse_Register_Event.aspx" />
     <Content Include="CreateAccount.aspx" />
     <Content Include="LoginPage.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Browse_Register_Event.aspx.cs">
+      <DependentUpon>Browse_Register_Event.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Browse_Register_Event.aspx.designer.cs">
+      <DependentUpon>Browse_Register_Event.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CreateAccount.aspx.cs">
       <DependentUpon>CreateAccount.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
