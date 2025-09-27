@@ -13,7 +13,7 @@ namespace VCMS
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        private string connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;TrustServerCertificate=True";
+        private string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDb;Initial Catalog=VCMS_DB;Integrated Security=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -103,6 +103,103 @@ namespace VCMS
                     userID = Convert.ToInt32(result);
                 }
                 return userID;
+            }
+        }
+
+
+        /// <summary>
+        /// Retrieves all events with their associated beneficiaries,
+        /// excluding events the specified user is already registered for
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public DataTable GetAllEventsWithBeneficiaries(int userId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"
+                    SELECT 
+                        e.EventID,
+                        e.Name AS EventName,
+                        e.Description,
+                        e.Location,
+                        e.StartDate,
+                        e.EndDate,
+                        STRING_AGG(b.Name, ', ') AS Beneficiaries
+                    FROM Event e
+                    LEFT JOIN Beneficiary_On_Event be ON e.EventID = be.EventID
+                    LEFT JOIN Beneficiary b ON be.BeneficiaryID = b.BeneficiaryID
+                    WHERE e.EventID NOT IN (SELECT EventID FROM User_On_Event WHERE UserID = @UserID)
+                    GROUP BY e.EventID, e.Name, e.Description, e.Location, e.StartDate, e.EndDate";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                da.SelectCommand.Parameters.AddWithValue("@UserID", userId);
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves all available skills from the Skill table.
+        /// </summary>
+        /// <returns></returns>
+        public DataTable GetSKills()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT SkillID, Description FROM Skill";
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
+
+        /// <summary>
+        /// Registers a user for a specific event with a selected skill.
+        /// Also ensures the user has the Volunteer role assigned.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="eventId"></param>
+        /// <param name="skillId"></param>
+        public void RegisterUserForEvent(int userId, int eventId, int skillId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                // Insert into User_On_Event if not exists
+                string insertUserOnEvent = @"
+                    IF NOT EXISTS (
+                        SELECT 1 FROM User_On_Event 
+                        WHERE UserID=@UserID AND EventID=@EventID AND SkillID=@SkillID
+                    )
+                    INSERT INTO User_On_Event (UserID, EventID, SkillID, WorkHours)
+                    VALUES (@UserID, @EventID, @SkillID, 0)";
+
+                using (SqlCommand cmd = new SqlCommand(insertUserOnEvent, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@EventID", eventId);
+                    cmd.Parameters.AddWithValue("@SkillID", skillId);
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Assign Volunteer role if not already assigned
+                string assignVolunteerRole = @"
+                    INSERT INTO User_Role (UserID, RoleID)
+                    SELECT @UserID, RoleID FROM Role WHERE Name='Volunteer'
+                    AND NOT EXISTS (
+                        SELECT 1 FROM User_Role WHERE UserID=@UserID AND RoleID = (SELECT RoleID FROM Role WHERE Name='Volunteer')
+                    )";
+
+                using (SqlCommand cmdRole = new SqlCommand(assignVolunteerRole, conn))
+                {
+                    cmdRole.Parameters.AddWithValue("@UserID", userId);
+                    cmdRole.ExecuteNonQuery();
+                }
             }
         }
     }
