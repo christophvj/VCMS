@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CreateAccount.aspx" />
+    <Content Include="LoginPage.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -77,6 +78,13 @@
       <DependentUpon>CreateAccount.aspx</DependentUpon>
     </Compile>
     <Compile Include="DataBaseControls.cs" />
+    <Compile Include="LoginPage.aspx.cs">
+      <DependentUpon>LoginPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LoginPage.aspx.designer.cs">
+      <DependentUpon>LoginPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Main.aspx.cs">
       <DependentUpon>Main.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

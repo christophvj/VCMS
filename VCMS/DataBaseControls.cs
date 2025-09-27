@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.UI.WebControls;
 
 namespace VCMS
 {
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        private string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDb;Initial Catalog=VCMS_DB;Integrated Security=True";
-
+        private string connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;TrustServerCertificate=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -44,7 +44,6 @@ namespace VCMS
                 throw new ArgumentException("Invalid table or column name.");
             }
 
-
             string query = $"SELECT COUNT(1) FROM [{tableName}] WHERE [{columnName}] = @Value";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -58,7 +57,6 @@ namespace VCMS
             }
             return exists;
         }
-
 
         /// <summary>
         /// Query to insert a new user into the Users table
@@ -87,7 +85,22 @@ namespace VCMS
             }
         }
 
-
-
+        //Login function to validate user credentials
+        // Reurns true if the credentials are valid, otherwise false
+        public bool ValidateUserCredentials(string email, string password)
+        {
+            bool isValid = false;
+            string query = "SELECT COUNT(1) FROM Users WHERE Email = @Email AND Password = @Password";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Password", password);
+                connection.Open();
+                int count = (int)cmd.ExecuteScalar(); // Returns the first column of the first row
+                isValid = count > 0;
+            }
+            return isValid;
+        }
     }
 }
