@@ -87,20 +87,23 @@ namespace VCMS
 
         //Login function to validate user credentials
         // Reurns true if the credentials are valid, otherwise false
-        public bool ValidateUserCredentials(string email, string password)
+        public int ValidateUserCredentials(string email, string password)
         {
-            bool isValid = false;
-            string query = "SELECT COUNT(1) FROM Users WHERE Email = @Email AND Password = @Password";
+            int userID = 0;
+            string query = "SELECT UserID FROM Users WHERE Email = @Email AND Password = @Password";
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, connection))
             {
                 cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@Password", password);
                 connection.Open();
-                int count = (int)cmd.ExecuteScalar(); // Returns the first column of the first row
-                isValid = count > 0;
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                {
+                    userID = Convert.ToInt32(result);
+                }
+                return userID;
             }
-            return isValid;
         }
     }
 }
