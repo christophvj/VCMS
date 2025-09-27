@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Browse_Register_Event.aspx.cs" Inherits="VCMS.Browse_Register_Event" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Register_Event.aspx.cs" Inherits="VCMS.Browse_Register_Event" %>
 
 <!DOCTYPE html>
 
@@ -14,6 +14,7 @@
             <asp:Label ID="lblPageHeading" runat="server" Text="Register For Events"></asp:Label>
         </div>
 
+        <!-- Div "EventBlocks" Contains Repeater for Displaying Events -->
         <div class="EventBlocks">
             <asp:Repeater ID="rptEvents" runat="server" OnItemCommand="rptEvents_ItemCommand" OnItemDataBound="rptEvents_ItemDataBound">
                     <ItemTemplate>
