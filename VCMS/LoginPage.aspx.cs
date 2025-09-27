@@ -21,9 +21,11 @@ namespace VCMS
             string password = txtPassword.Text.Trim();
 
             DataBaseControls dbLogin = new DataBaseControls();
+            int userId = dbLogin.ValidateUserCredentials(email, password);
 
-            if (dbLogin.ValidateUserCredentials(email, password))
+            if (userId > 0)
             {
+                Session["UserID"] = userId;
                 // Successful login
                 Response.Redirect("CreateAccount.aspx"); // Redirect to the desired page after login
             }
