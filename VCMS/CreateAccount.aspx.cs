@@ -52,9 +52,12 @@ namespace VCMS
         {
             // Get user input
             getUserInput();
+            
+            string tableName = "Users";
+            string columnName = "Email";
 
             // Validate User Account Existence
-            if (db.EmailExists(email))
+            if (db.EntryExists(tableName, columnName, email))
             {
                 lblMessage.Visible = true;
                 lblMessage.ForeColor = System.Drawing.Color.Red;
