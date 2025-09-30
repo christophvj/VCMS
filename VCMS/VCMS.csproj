@@ -64,6 +64,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Donation.aspx" />
     <Content Include="EventParticipation.aspx" />
     <Content Include="MaintainEvents.aspx" />
     <Content Include="ManageUsersAndBeneficiaries.aspx" />
@@ -76,6 +77,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Donation.aspx.cs">
+      <DependentUpon>Donation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Donation.aspx.designer.cs">
+      <DependentUpon>Donation.aspx</DependentUpon>
+    </Compile>
     <Compile Include="EventParticipation.aspx.cs">
       <DependentUpon>EventParticipation.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
