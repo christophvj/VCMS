@@ -7,21 +7,17 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-
 namespace VCMS
 {
     public partial class CreateAccount : System.Web.UI.Page
     {
-
-       
-
         protected void Page_Load(object sender, EventArgs e)
         {
             // Hide inormation message
             lblMessage.Visible = false;
         }
 
-        DataBaseControls db = new DataBaseControls();
+        private DataBaseControls db = new DataBaseControls();
 
         private String name;
         private String surname;
@@ -52,7 +48,7 @@ namespace VCMS
         {
             // Get user input
             getUserInput();
-            
+
             string tableName = "Users";
             string columnName = "Email";
 
@@ -70,7 +66,7 @@ namespace VCMS
                 //Insert user input into the database
                 db.CreateUser(name, surname, email, phoneNumber, password);
 
-                //Success message 
+                //Success message
                 lblMessage.Visible = true;
                 lblMessage.ForeColor = System.Drawing.Color.Green;
                 lblMessage.Text = "Account created successfully.";

@@ -13,7 +13,7 @@ namespace VCMS
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        private string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDb;Initial Catalog=VCMS_DB;Integrated Security=True";
+        public string connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -106,7 +106,6 @@ namespace VCMS
             }
         }
 
-
         /// <summary>
         /// Retrieves all events with their associated beneficiaries,
         /// excluding events the specified user is already registered for
@@ -118,7 +117,7 @@ namespace VCMS
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"
-                    SELECT 
+                    SELECT
                         e.EventID,
                         e.Name AS EventName,
                         e.Description,
@@ -173,7 +172,7 @@ namespace VCMS
                 // Insert into User_On_Event if not exists
                 string insertUserOnEvent = @"
                     IF NOT EXISTS (
-                        SELECT 1 FROM User_On_Event 
+                        SELECT 1 FROM User_On_Event
                         WHERE UserID=@UserID AND EventID=@EventID AND SkillID=@SkillID
                     )
                     INSERT INTO User_On_Event (UserID, EventID, SkillID, WorkHours)
