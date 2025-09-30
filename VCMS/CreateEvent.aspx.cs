@@ -103,14 +103,14 @@ namespace VCMS
                         command.Parameters.AddWithValue("@EventID", newEventId);
                         command.Parameters.AddWithValue("@BeneficiaryID", selectedBeneficiaryId);
                         command.ExecuteNonQuery();
-                        Response.Write("<script>alert('Event created successfully.');</script>");|
+                        Response.Write("<script>alert('Event created successfully.');</script>");
                         Response.Redirect("Main.aspx");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Response.Write("<script>alert('Error creating event.');</script>");
+                Response.Write("<script>alert('Error creating event.');</script>" + ex.ToString());
                 return;
             }
         }

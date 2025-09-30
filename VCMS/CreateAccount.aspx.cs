@@ -70,6 +70,8 @@ namespace VCMS
                 lblMessage.Visible = true;
                 lblMessage.ForeColor = System.Drawing.Color.Green;
                 lblMessage.Text = "Account created successfully.";
+                Response.Write("<script>alert('Account created successfully. Please log in.');</script>");
+                Response.Redirect("~/LoginPage.aspx");
 
                 ClearInputFields();
             }

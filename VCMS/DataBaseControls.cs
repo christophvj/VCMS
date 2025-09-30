@@ -13,7 +13,7 @@ namespace VCMS
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        public string connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+        public string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=VCMS_DB;Integrated Security=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -198,6 +198,32 @@ namespace VCMS
                 {
                     cmdRole.Parameters.AddWithValue("@UserID", userId);
                     cmdRole.ExecuteNonQuery();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reacords a donation made by a user to a specific event.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="eventId"></param>
+        /// <param name="amount"></param>
+        public void CreateDonation(int userId, int eventId, decimal amount)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"INSERT INTO Donation (UserID, EventID, Amount, Donation_Date)
+                               VALUES (@UserID, @EventID, @Amount, @DonationDate)";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@EventID", eventId);
+                    cmd.Parameters.AddWithValue("@Amount", amount);
+                    cmd.Parameters.AddWithValue("@DonationDate", DateTime.Now.Date);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
