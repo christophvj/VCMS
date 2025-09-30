@@ -20,11 +20,12 @@ namespace VCMS
             }
         }
 
-        private string connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;TrustServerCertificate=True";
+        private DataBaseControls db = new DataBaseControls();
+        //private string db.connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;TrustServerCertificate=True";
 
         private void PopulateBeneficiaryDropDown()
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(db.connectionString))
             {
                 string query = "SELECT BeneficiaryID, Name FROM Beneficiary";
                 SqlCommand command = new SqlCommand(query, connection);
@@ -55,7 +56,7 @@ namespace VCMS
         protected void btnSaveEvent_Click(object sender, EventArgs e)
         {
             int selectedBeneficiaryId = Convert.ToInt32(BeneficiaryDropDown.SelectedValue);
-            string eventName = BeneficiaryDropDown.SelectedItem.Text;
+            string eventName = txtEventName.Text;
             string description = txtDescription.Text;
             string location = txtLocation.Text;
             DateTime startDate = cldrStartDate.SelectedDate;
@@ -63,8 +64,7 @@ namespace VCMS
 
             //// Beneficiary Id moet nog gestoor word in die session, glo nie is nodig nie, moet seker maak
 
-            if (selectedBeneficiaryId == 0) // Moet hierdie nog verander word na beneficiary id
-
+            if (string.IsNullOrEmpty(BeneficiaryDropDown.SelectedValue))
             {
                 Response.Write("<script>alert('Please select a beneficiary.');</script>");
                 return;
@@ -75,43 +75,44 @@ namespace VCMS
                 return;
             }
 
-            string insertQuery = "INSERT INTO Event (Name, Description, Location, StartDate, EndDate) " +
-                                 "VALUES (@Name, @Description, @Location, @StartDate, @EndDate)";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+            try
+            {   //Store event information in Event table
+                string insertQuery = "INSERT INTO Event (Name, Description, Location, StartDate, EndDate) OUTPUT INSERTED.EVENTID " +
+                     "VALUES (@Name, @Description, @Location, @StartDate, @EndDate); ";//Capture die nuwe Event ID wat gegenerate is deur die table se auto-increment -> Verwys na: newEventId = (int)command.ExecuteScalar(
+                int newEventId;
+                //Connection
+                using (SqlConnection connection = new SqlConnection(db.connectionString))
                 {
-                    command.Parameters.AddWithValue("@Name", eventName);
-                    command.Parameters.AddWithValue("@Description", description);
-                    command.Parameters.AddWithValue("@Location", location);
-                    command.Parameters.AddWithValue("@StartDate", startDate);
-                    command.Parameters.AddWithValue("@EndDate", endDate);
-                    try
+                    connection.Open();
+                    //Command
+                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
-                        connection.Open();
-                        int rowsAffected = command.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            //ClearInputFields();
-                            string message = "Event created successfully!";
-                            ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
-                            //lblSaveMSg.Text = "Event created successfully!";
-                            Response.Write("<script>alert('Event created successfully!');</script>");
-                        }
-                        else
-                        {
-                            Response.Write("<script>alert('Error creating event. Please try again.');</script>");
-                        }
+                        command.Parameters.AddWithValue("@Name", eventName);
+                        command.Parameters.AddWithValue("@Description", description);
+                        command.Parameters.AddWithValue("@Location", location);
+                        command.Parameters.AddWithValue("@StartDate", startDate);
+                        command.Parameters.AddWithValue("@EndDate", endDate);
+
+                        newEventId = (int)command.ExecuteScalar(); // Kry die EventID van die nuwe event
                     }
-                    catch (Exception ex)
+
+                    string insertEventBeneficiaryQuery = "INSERT INTO Beneficiary_On_Event (EventID, BeneficiaryID) " +
+                        "VALUES (@EventID, @BeneficiaryID);";
+                    using (SqlCommand command = new SqlCommand(insertEventBeneficiaryQuery, connection))
                     {
-                        // Handle exception (log it, show message, etc.)
-                        Response.Write("<script>alert('Error: " + ex.Message + "');</script>");//Server side problems like sql not connecting and stuff will be shown here and sql query problems
-                        lblSaveMSg.Text = "Event create failed!";
+                        command.Parameters.AddWithValue("@EventID", newEventId);
+                        command.Parameters.AddWithValue("@BeneficiaryID", selectedBeneficiaryId);
+                        command.ExecuteNonQuery();
+                        Response.Write("<script>alert('Event created successfully.');</script>");|
+                        Response.Redirect("Main.aspx");
                     }
-                } // Laaste toets was successful, Toets data is as ID 4 by Events
+                }
             }
-;
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error creating event.');</script>");
+                return;
+            }
         }
     }
 }

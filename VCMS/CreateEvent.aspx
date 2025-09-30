@@ -15,6 +15,8 @@
         </asp:DropDownList>
         <asp:Label ID="lblBenmseg" runat="server" Text="Label" Visible="False"></asp:Label>
         <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="BeneficiaryDropDown" ErrorMessage="RequiredFieldValidator"></asp:RequiredFieldValidator>
+        <asp:Label ID="Label6" runat="server" Text="Name of Event"></asp:Label>
+        <asp:TextBox ID="txtEventName" runat="server"></asp:TextBox>
         <p>
             <asp:Label ID="Label2" runat="server" Text="Description"></asp:Label>
             <asp:TextBox ID="txtDescription" runat="server"></asp:TextBox>
@@ -25,13 +27,12 @@
         <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="txtLocation" ErrorMessage="Required field"></asp:RequiredFieldValidator>
         <p>
             <asp:Label ID="Label4" runat="server" Text="Start date"></asp:Label>
-            <asp:TextBox ID="TextBox3" runat="server"></asp:TextBox>
             <asp:Calendar ID="cldrStartDate" runat="server" Height="16px" Width="206px"></asp:Calendar>
         </p>
         <asp:Label ID="Label5" runat="server" Text="End date"></asp:Label>
         <asp:Calendar ID="cldrEndDate" runat="server"></asp:Calendar>
         <asp:Button ID="btnSaveEvent" runat="server" OnClick="btnSaveEvent_Click" Text="Save Event" />
-        <asp:Label ID="lblSaveMSg" runat="server" Text="Label"></asp:Label>
+        <asp:Label ID="lblSaveMSg" runat="server" Text="Label" Visible="False"></asp:Label>
     </form>
 </body>
 </html>
