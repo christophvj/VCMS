@@ -66,6 +66,7 @@
   <ItemGroup>
     <Content Include="Register_Event.aspx" />
     <Content Include="CreateAccount.aspx" />
+    <Content Include="CreateEvent.aspx" />
     <Content Include="LoginPage.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Web.config" />
@@ -84,6 +85,13 @@
     </Compile>
     <Compile Include="CreateAccount.aspx.designer.cs">
       <DependentUpon>CreateAccount.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CreateEvent.aspx.cs">
+      <DependentUpon>CreateEvent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CreateEvent.aspx.designer.cs">
+      <DependentUpon>CreateEvent.aspx</DependentUpon>
     </Compile>
     <Compile Include="DataBaseControls.cs" />
     <Compile Include="LoginPage.aspx.cs">
