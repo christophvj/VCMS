@@ -64,14 +64,39 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="EventParticipation.aspx" />
+    <Content Include="MaintainEvents.aspx" />
+    <Content Include="ManageUsersAndBeneficiaries.aspx" />
     <Content Include="Register_Event.aspx" />
     <Content Include="CreateAccount.aspx" />
     <Content Include="CreateEvent.aspx" />
     <Content Include="LoginPage.aspx" />
     <Content Include="Main.aspx" />
+    <Content Include="UpdateUserInfo.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventParticipation.aspx.cs">
+      <DependentUpon>EventParticipation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EventParticipation.aspx.designer.cs">
+      <DependentUpon>EventParticipation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MaintainEvents.aspx.cs">
+      <DependentUpon>MaintainEvents.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MaintainEvents.aspx.designer.cs">
+      <DependentUpon>MaintainEvents.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ManageUsersAndBeneficiaries.aspx.cs">
+      <DependentUpon>ManageUsersAndBeneficiaries.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ManageUsersAndBeneficiaries.aspx.designer.cs">
+      <DependentUpon>ManageUsersAndBeneficiaries.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Register_Event.aspx.cs">
       <DependentUpon>Register_Event.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -109,6 +134,13 @@
       <DependentUpon>Main.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdateUserInfo.aspx.cs">
+      <DependentUpon>UpdateUserInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UpdateUserInfo.aspx.designer.cs">
+      <DependentUpon>UpdateUserInfo.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
