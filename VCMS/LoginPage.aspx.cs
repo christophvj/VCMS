@@ -27,6 +27,8 @@ namespace VCMS
             {
                 Session["UserID"] = userId;
                 // Successful login
+
+                Response.Write("<script>alert('Login successfull.');</script>");
                 Response.Redirect("CreateAccount.aspx"); // Redirect to the desired page after login
             }
             else
@@ -35,6 +37,7 @@ namespace VCMS
                 RegularExpressionValidator1.Visible = true;
                 RegularExpressionValidator1.ForeColor = System.Drawing.Color.Red;
                 Label3.Text = "Invalid email or password.";
+                Response.Write("<script>alert('Login successfull.');</script>");
             }
         }
     }
