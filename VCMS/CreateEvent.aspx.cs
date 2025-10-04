@@ -45,7 +45,6 @@ namespace VCMS
                 }
                 catch (Exception ex)
                 {
-                    // Handle exception (log it, show message, etc.)
                     lblBenmseg.Text = "Error loading beneficiaries: " + ex.Message;
                     lblBenmseg.ForeColor = System.Drawing.Color.Red;
                     lblBenmseg.Visible = true;
@@ -104,7 +103,7 @@ namespace VCMS
                         command.Parameters.AddWithValue("@BeneficiaryID", selectedBeneficiaryId);
                         command.ExecuteNonQuery();
                         Response.Write("<script>alert('Event created successfully.');</script>");
-                        Response.Redirect("Main.aspx");
+                        Response.Redirect("MaintainEvents.aspx");
                     }
                 }
             }
