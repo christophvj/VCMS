@@ -83,29 +83,38 @@ namespace VCMS
         {
             DataBaseControls db = new DataBaseControls();
             int eventId = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
-            using (SqlConnection con = new SqlConnection(db.connectionString))
+
+            try
             {
-                con.Open();
+                // Delete related records in junction tables first to maintain referential integrity
+                db.DeleteRecordsByEventID("User_On_Event", eventId);
+                db.DeleteRecordsByEventID("Beneficiary_On_Event", eventId);
+                db.DeleteRecordsByEventID("Donation", eventId);
+                db.DeleteRecordsByEventID("Event", eventId);
 
-                // First, delete related Beneficiary_On_Event records
-                string deleteBeneficiaryOnEvent = "DELETE FROM Beneficiary_On_Event WHERE EventID=@EventID";
-                using (SqlCommand cmdDeleteRelated = new SqlCommand(deleteBeneficiaryOnEvent, con))
-                {
-                    cmdDeleteRelated.Parameters.AddWithValue("@EventID", eventId);
-                    cmdDeleteRelated.ExecuteNonQuery();
-                }
-
-                // Then, delete the Event record
-                string deleteEvent = "DELETE FROM Event WHERE EventID=@EventID";
-                using (SqlCommand cmdDeleteEvent = new SqlCommand(deleteEvent, con))
-                {
-                    cmdDeleteEvent.Parameters.AddWithValue("@EventID", eventId);
-                    cmdDeleteEvent.ExecuteNonQuery();
-                }
-
-                con.Close();
+                BindGridView();
             }
-            BindGridView();
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error deleting event: " + ex.Message + "');</script>");
+                return;
+            }
+        }
+
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                LinkButton deleteButton = e.Row.Cells
+                    .OfType<TableCell>()
+                    .SelectMany(c => c.Controls.OfType<LinkButton>())
+                    .FirstOrDefault(lb => lb.CommandName == "Delete");
+
+                if (deleteButton != null)
+                {
+                    deleteButton.OnClientClick = "return confirm('Are you sure you want to delete this event? This will also delete all related records.');";
+                }
+            }
         }
 
         protected void btnAddEvent_Click(object sender, EventArgs e)
@@ -113,8 +122,5 @@ namespace VCMS
             Response.Redirect("CreateEvent.aspx");
         }
 
-        // Use connection string from DataBaseControls
-        // Example: DataBaseControls db = new DataBaseControls();
-        // db.connectionString;
     }
 }
