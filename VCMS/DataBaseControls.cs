@@ -13,7 +13,7 @@ namespace VCMS
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        public string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=VCMS_DB;Integrated Security=True;Encrypt=True";
+        public string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=VCMS_DB;Integrated Security=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -225,6 +225,28 @@ namespace VCMS
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+
+        public void DeleteRecordsByEventID(string tableName, int eventId)
+        {
+            // Basic validation to prevent SQL injection
+            var allowedTables = new HashSet<string> { "User_On_Event", "Beneficiary_On_Event", "Donation", "Event" };
+            if (!allowedTables.Contains(tableName))
+            {
+                throw new ArgumentException("Invalid table name.");
+            }
+
+            // Sql query to delete records by EventID
+            string query = $"DELETE FROM {tableName} WHERE EventID = @EventId";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@EventId", eventId);
+                conn.Open();
+                cmd.ExecuteNonQuery();
             }
         }
     }
