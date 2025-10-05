@@ -59,20 +59,7 @@ namespace VCMS
         //Add New User
         protected void btnAddUser_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(db.connectionString))
-            {
-                con.Open();
-                string query = "INSERT INTO Users (Name, Surname, Email, PhoneNumber, Password) VALUES (@Name, @Surname, @Email, @PhoneNumber, @Password)";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Name", txtName.Text);
-                cmd.Parameters.AddWithValue("@Surname", txtSurname.Text);
-                cmd.Parameters.AddWithValue("@Email", txtEmail.Text);
-                cmd.Parameters.AddWithValue("@PhoneNumber", txtPhoneNumber.Text);
-                cmd.Parameters.AddWithValue("@Password", txtPassword.Text);
-
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
+            db.CreateUser(txtName.Text, txtSurname.Text, txtEmail.Text, txtPhoneNumber.Text, txtPassword.Text);
 
             LoadUsers();
         }
