@@ -28,7 +28,7 @@ namespace VCMS
             if (Session["UserID"] != null)
             {
                 int userId = Convert.ToInt32(Session["UserID"]);
-                rptEvents.DataSource = db.GetAllEventsWithBeneficiaries(userId);
+                rptEvents.DataSource = db.GetAllEventsWithBeneficiaries(userId, true);
                 rptEvents.DataBind();
             }
         }
