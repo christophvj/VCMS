@@ -13,7 +13,7 @@ namespace VCMS
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        public string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=VCMS_DB;Integrated Security=True;Encrypt=True";
+        public string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=VCMS_DB;Integrated Security=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -225,6 +225,58 @@ namespace VCMS
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Return User Account Information
+        /// One field entry value per function call
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="userID"></param>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public string GetAccInfo(string table, int userID, string field)
+        {
+            string info = "";
+
+            string query = $"SELECT {field} FROM {table} WHERE UserID = @userID";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@userID", userID);
+
+                conn.Open();
+                object value = cmd.ExecuteScalar();
+
+                if (value != null && value != DBNull.Value)
+                {
+                    info = value.ToString();
+                }
+            }
+            return info;
+        }
+
+        /// <summary>
+        /// Updates a specific field in a table for a given userID with a new value
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="userID"></param>
+        /// <param name="field"></param>
+        /// <param name="newVal"></param>
+        public void updateTableFieldValue(string table, int userID, string field, object newVal)
+        {
+            string query = $"UPDATE {table} SET {field} = @value WHERE UserID = @userID";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@value", newVal);
+                cmd.Parameters.AddWithValue("@userID", userID);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
             }
         }
     }
