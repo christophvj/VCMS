@@ -13,12 +13,13 @@
             <asp:Button ID="btnAddEvent" runat="server" OnClick="btnAddEvent_Click" Text="Add Event" />
         </div>
         <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"
-    DataKeyNames="EventID"
-    OnRowEditing="GridView1_RowEditing"
-    OnRowCancelingEdit="GridView1_RowCancelingEdit"
-    OnRowUpdating="GridView1_RowUpdating"
-    OnRowDeleting="GridView1_RowDeleting"
-    CssClass="table table-striped">
+            DataKeyNames="EventID"
+            OnRowEditing="GridView1_RowEditing"
+            OnRowCancelingEdit="GridView1_RowCancelingEdit"
+            OnRowUpdating="GridView1_RowUpdating"
+            OnRowDeleting="GridView1_RowDeleting"
+            OnRowDataBound="GridView1_RowDataBound"
+            CssClass="table table-striped">
 
     <Columns>
         <asp:BoundField DataField="EventID" HeaderText="ID" ReadOnly="True" />

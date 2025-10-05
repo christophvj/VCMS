@@ -14,6 +14,9 @@ namespace VCMS
         private DataBaseControls db = new DataBaseControls();
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Wire deregister button to call back
+            btnDeregister.Click += btnDeregister_Click;
+
             //Enable selection on the events grid
             gvEvents.AutoGenerateSelectButton = true;
             gvEvents.DataKeyNames = new[] { "EventID" };
