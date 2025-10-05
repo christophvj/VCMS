@@ -112,7 +112,7 @@ namespace VCMS
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public DataTable GetAllEventsWithBeneficiaries(int userId)
+        public DataTable GetAllEventsWithBeneficiaries(int userId, bool excludeRegisteredEvents)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -123,17 +123,26 @@ namespace VCMS
                         e.Description,
                         e.Location,
                         e.StartDate,
-                        e.EndDate,
+                        e.[EndDate],
                         STRING_AGG(b.Name, ', ') AS Beneficiaries
                     FROM Event e
                     LEFT JOIN Beneficiary_On_Event be ON e.EventID = be.EventID
-                    LEFT JOIN Beneficiary b ON be.BeneficiaryID = b.BeneficiaryID
-                    WHERE e.EventID NOT IN (SELECT EventID FROM User_On_Event WHERE UserID = @UserID)
-                    GROUP BY e.EventID, e.Name, e.Description, e.Location, e.StartDate, e.EndDate";
+                    LEFT JOIN Beneficiary b ON be.BeneficiaryID = b.BeneficiaryID";
+
+                if (excludeRegisteredEvents)
+                {
+                    query += " WHERE e.EventID NOT IN (SELECT EventID FROM User_On_Event WHERE UserID = @UserID)";
+                }
+
+                query += " GROUP BY e.EventID, e.Name, e.Description, e.Location, e.StartDate, e.EndDate";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                da.SelectCommand.Parameters.AddWithValue("@UserID", userId);
 
+                if (excludeRegisteredEvents)
+                {
+                    da.SelectCommand.Parameters.AddWithValue("@UserID", userId);
+                }
+                
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 return dt;
@@ -225,6 +234,27 @@ namespace VCMS
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void DeleteRecordsByEventID(string tableName, int eventId)
+        {
+            // Basic validation to prevent SQL injection
+            var allowedTables = new HashSet<string> { "User_On_Event", "Beneficiary_On_Event", "Donation", "Event" };
+            if (!allowedTables.Contains(tableName))
+            {
+                throw new ArgumentException("Invalid table name.");
+            }
+
+            // Sql query to delete records by EventID
+            string query = $"DELETE FROM {tableName} WHERE EventID = @EventID";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@EventID", eventId);
+                conn.Open();
+                cmd.ExecuteNonQuery();
             }
         }
 
