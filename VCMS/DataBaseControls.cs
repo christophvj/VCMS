@@ -227,5 +227,27 @@ namespace VCMS
                 }
             }
         }
+
+
+        public void DeleteRecordsByEventID(string tableName, int eventId)
+        {
+            // Basic validation to prevent SQL injection
+            var allowedTables = new HashSet<string> { "User_On_Event", "Beneficiary_On_Event", "Donation", "Event" };
+            if (!allowedTables.Contains(tableName))
+            {
+                throw new ArgumentException("Invalid table name.");
+            }
+
+            // Sql query to delete records by EventID
+            string query = $"DELETE FROM {tableName} WHERE EventID = @EventId";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@EventId", eventId);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

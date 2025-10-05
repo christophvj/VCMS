@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -11,11 +13,114 @@ namespace VCMS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!IsPostBack)
+            {
+                BindGridView();
+            }
         }
 
-        // Use connection string from DataBaseControls
-        // Example: DataBaseControls db = new DataBaseControls();
-        // db.connectionString;
+        private void BindGridView()
+        {
+            DataBaseControls db = new DataBaseControls();
+
+            using (SqlConnection con = new SqlConnection(db.connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT EventID, Name, Description, Location, StartDate, EndDate FROM Event", con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                GridView1.DataSource = dt;
+                GridView1.DataBind();
+            }
+        }
+
+        protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
+        {
+            GridView1.EditIndex = e.NewEditIndex;
+            BindGridView();
+        }
+
+        protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+        {
+            GridView1.EditIndex = -1;
+            BindGridView();
+        }
+
+        protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        {
+            DataBaseControls db = new DataBaseControls();
+            int eventId = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
+            string name = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtName")).Text;
+            string description = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtDescription")).Text;
+            string location = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtLocation")).Text;
+            DateTime startDate = Convert.ToDateTime(((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtStartDate")).Text);
+            DateTime endDate = Convert.ToDateTime(((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtEndDate")).Text);
+            // Validation: End date cannot be before start date
+            if (endDate < startDate)
+            {
+                Response.Write("<script>alert('End date cannot be before start date.');</script>");
+                return;
+            }
+
+            using (SqlConnection con = new SqlConnection(db.connectionString))
+            {
+                string query = "UPDATE Event SET Name=@Name, Description=@Description, Location=@Location, StartDate=@StartDate, EndDate=@EndDate WHERE EventID=@EventID";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@EventID", eventId);
+                cmd.Parameters.AddWithValue("@Name", name);
+                cmd.Parameters.AddWithValue("@Description", description);
+                cmd.Parameters.AddWithValue("@Location", location);
+                cmd.Parameters.AddWithValue("@StartDate", startDate);
+                cmd.Parameters.AddWithValue("@EndDate", endDate);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            GridView1.EditIndex = -1;
+            BindGridView();
+        }
+
+        protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            DataBaseControls db = new DataBaseControls();
+            int eventId = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
+
+            try
+            {
+                // Delete related records in junction tables first to maintain referential integrity
+                db.DeleteRecordsByEventID("User_On_Event", eventId);
+                db.DeleteRecordsByEventID("Beneficiary_On_Event", eventId);
+                db.DeleteRecordsByEventID("Donation", eventId);
+                db.DeleteRecordsByEventID("Event", eventId);
+
+                BindGridView();
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error deleting event: " + ex.Message + "');</script>");
+                return;
+            }
+        }
+
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                LinkButton deleteButton = e.Row.Cells
+                    .OfType<TableCell>()
+                    .SelectMany(c => c.Controls.OfType<LinkButton>())
+                    .FirstOrDefault(lb => lb.CommandName == "Delete");
+
+                if (deleteButton != null)
+                {
+                    deleteButton.OnClientClick = "return confirm('Are you sure you want to delete this event? This will also delete all related records.');";
+                }
+            }
+        }
+
+        protected void btnAddEvent_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("CreateEvent.aspx");
+        }
+
     }
 }

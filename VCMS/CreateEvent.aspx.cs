@@ -103,7 +103,7 @@ namespace VCMS
                         command.Parameters.AddWithValue("@BeneficiaryID", selectedBeneficiaryId);
                         command.ExecuteNonQuery();
                         Response.Write("<script>alert('Event created successfully.');</script>");
-                        Response.Redirect("Main.aspx");
+                        Response.Redirect("MaintainEvents.aspx");
                     }
                 }
             }
