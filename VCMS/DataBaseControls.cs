@@ -309,5 +309,109 @@ namespace VCMS
                 cmd.ExecuteNonQuery();
             }
         }
+
+
+        /// <summary>
+        /// Returns the top 10 events with the highest number of volunteers
+        /// </summary>
+        /// <returns></returns>
+        public DataTable GetTopEvents()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"
+                    Select TOP 10 
+                        e.EventID,
+                        e.Name AS EventName,
+                        COUNT(uoe.UserID) AS VolunteerCount
+                    FROM Event e
+                    LEFT JOIN User_On_Event uoe ON e.EventID = uoe.EventID
+                    GROUP BY e.EventID, e.Name
+                    ORDER BY VolunteerCount DESC;";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
+
+
+        /// <summary>
+        /// Returns all events and the number of volunteers registered per event
+        /// </summary>
+        /// <returns></returns>
+        public DataTable GetVolunteersPerEvent()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"
+                    SELECT
+                        e.EventID,
+                        e.Name AS EventName,
+                        COUNT(uoe.UserID) AS VolunteerCount
+                    From Event e
+                    LEFT JOIN User_On_Event uoe ON e.EventID = uoe.EventID
+                    GROUP BY e.EventID, e.Name
+                    ORDER BY e.Name;";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
+
+
+        /// <summary>
+        /// Returns all events with a list of beneficiaries linked to each
+        /// </summary>
+        /// <returns></returns>
+        public DataTable GetBeneficiariesPerEvent()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"
+                    SELECT
+                        e.EventID,
+                        e.Name AS EventName,
+                        STRING_AGG(b.Name, ',') AS Beneficiaries
+                    FROM Event e
+                    LEFT JOIN Beneficiary_On_Event be ON e.EventID = be.EventID
+                    LEFT JOIN Beneficiary b ON be.BeneficiaryID = b.BeneficiaryID
+                    GROUP BY e.EventID, e.Name
+                    ORDER BY e.Name;";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
+
+        /// <summary>
+        /// Returns all events with their total donations amounts
+        /// </summary>
+        /// <returns></returns>
+        public DataTable GetTotalDonationsPerEvent()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"
+                    SELECT
+                        e.EventID,
+                        e.Name AS EventName,
+                        IsNull(SUM(d.Amount), 0) AS TotalDonations
+                    FROM Event e
+                    LEFT JOIN Donation d ON e.EventID = d.EventID
+                    GROUP BY e.EventID, e.Name
+                    ORDER BY TotalDonations DESC;";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
     }
 }
