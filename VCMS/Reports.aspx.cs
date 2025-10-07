@@ -14,18 +14,31 @@ namespace VCMS
         DataBaseControls db = new DataBaseControls();
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Check if user is logged in
+            if (Session["UserID"] == null)
+            {
+                // Redirect to login page
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
+                // Set the defualt view to Top Events
                 mvReports.ActiveViewIndex = 0;
                 loadTopEvents();
             }
         }
 
+
+        // Handles menu item clicks
         protected void menuReports_MenuItemClick(object sender, MenuEventArgs e)
         {
+            // Get the value of the clicked menu item
             int index = int.Parse(e.Item.Value);
             mvReports.ActiveViewIndex = index;
 
+            // Load the corresponding data based on the clicked menu item
             switch (index)
             {
                 case 0:
@@ -43,6 +56,7 @@ namespace VCMS
             }
         }
 
+        // Loads top 10 Events report
         private void loadTopEvents()
         {
             DataTable dt = db.GetTopEvents();
@@ -50,6 +64,7 @@ namespace VCMS
             gvTopEvents.DataBind();
         }
 
+        // Loads Volunteers per Event report
         private void loadVolunteersPerEvent()
         {
             DataTable dt = db.GetVolunteersPerEvent();
@@ -57,6 +72,7 @@ namespace VCMS
             gvVolunteersPerEvent.DataBind();
         }
 
+        // Loads Beneficiaries per Event report
         private void loadBeneficiariesPerEvent()
         {
             DataTable dt = db.GetBeneficiariesPerEvent();
@@ -64,6 +80,7 @@ namespace VCMS
             gvBeneficiariesPerEvent.DataBind();
         }
 
+        // Loads Total Donations per Event report
         private void loadTotalDonationsPerEvent()
         {
             DataTable dt = db.GetTotalDonationsPerEvent();
