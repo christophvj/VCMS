@@ -22,6 +22,11 @@
         </asp:Menu>
     </div>
 
+    <!-- Export Button --> 
+    <div style="text-align:center; margin-bottom:20px;">
+        <asp:Button ID="btnExportToExcel" runat="server" Text="Export to Excel" OnClick="btnExportToExcel_Click" CssClass="export-btn" />
+    </div>
+
     <!-- Reports MultiView -->
     <asp:MultiView ID="mvReports" runat="server" ActiveViewIndex="0">
 
@@ -169,6 +174,22 @@
 
         .DataGrid tr:hover {
             background-color: #f1f1f1;
+        }
+
+        /* Export Button */
+        .export-btn {
+            padding: 10px 20px;
+            background-color: #00796B;
+            color: white;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .export-btn:hover {
+            background-color: #004D40;
         }
 
         /* Responsive adjustments */
