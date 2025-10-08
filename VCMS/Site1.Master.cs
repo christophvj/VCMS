@@ -60,12 +60,14 @@ namespace VCMS
                 if (roles.Contains("Donor"))
                 {
                     linkDonation.Visible = true;
+                    linkRegisterEvent.Visible = true;
                     linkEventParticipation.Visible = true;
                     linkUpdateUserInfo.Visible = true;
                     linkLogout.Visible = true;
                 }
                 if (roles.Contains("Volunteer"))
                 {
+                    linkDonation.Visible = true;
                     linkRegisterEvent.Visible = true;
                     linkEventParticipation.Visible = true;
                     linkUpdateUserInfo.Visible = true;
