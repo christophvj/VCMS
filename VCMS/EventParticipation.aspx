@@ -1,13 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="EventParticipation.aspx.cs" Inherits="VCMS.EventParticipation" %>
+﻿<%@ Page Title="View Event Participation" Language="C#" AutoEventWireup="true" CodeBehind="EventParticipation.aspx.cs" Inherits="VCMS.EventParticipation" MasterPageFile="~/Site1.Master" %>
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-</head>
-<body>
-    <form id="form1" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
         <div>
             <asp:Label ID="lblMyEventsAndDonations" runat="server" Font-Bold="True" Font-Size="XX-Large" Text="My Events and Donations"></asp:Label>
         </div>
@@ -24,6 +19,6 @@
         </p>
         <asp:GridView ID="gvDonations" runat="server" Height="145px" Width="683px">
         </asp:GridView>
-    </form>
-</body>
-</html>
+
+</asp:Content>
+

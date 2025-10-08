@@ -1,0 +1,36 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site1.master.cs" Inherits="VCMS.Site1" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <link href="CSS/General.css" rel="stylesheet" />
+
+</head>
+<body class="body">
+    <form id="form1" runat="server">
+
+        <!-- Nav Bar at the top of pag -->
+        <div class="navBar">
+            <asp:HyperLink ID="linkHome" runat="server" CssClass="navLink" NavigateUrl="~/Main.aspx">Home</asp:HyperLink>
+            <asp:HyperLink ID="linkCreateAccount" runat="server" CssClass="navLink" NavigateUrl="~/CreateAccount.aspx">Create Account</asp:HyperLink>
+            <asp:HyperLink ID="linkDonation" runat="server" CssClass="navLink" NavigateUrl="~/Donation.aspx">Donation</asp:HyperLink>
+            <asp:HyperLink ID="linkEventParticipation" runat="server" CssClass="navLink" NavigateUrl="~/EventParticipation.aspx">My Events/Donations</asp:HyperLink>
+            <asp:HyperLink ID="linkMaintainEvents" runat="server" CssClass="navLink" NavigateUrl="~/MaintainEvents.aspx">Maintain Events</asp:HyperLink>
+            <asp:HyperLink ID="linkCreateEvents" runat="server" CssClass="navLink" NavigateUrl="~/CreateEvent.aspx">Create Events</asp:HyperLink>
+            <asp:HyperLink ID="linkManageUsers" runat="server" CssClass="navLink" NavigateUrl="~/ManageUsersAndBeneficiaries.aspx">Manage Users & Beneficiaries</asp:HyperLink>
+            <asp:HyperLink ID="linkRegisterEvent" runat="server" CssClass="navLink" NavigateUrl="~/Register_Event.aspx">Register Event</asp:HyperLink>
+            <asp:HyperLink ID="linkReports" runat="server" CssClass="navLink" NavigateUrl="~/Reports.aspx">Reports</asp:HyperLink>
+            <asp:HyperLink ID="linkUpdateUserInfo" runat="server" CssClass="navLink" NavigateUrl="~/UpdateUserInfo.aspx">Update Account</asp:HyperLink>
+            <asp:HyperLink ID="linkLogout" runat="server" CssClass="navLink" NavigateUrl="~/LoginPage.aspx">Logout</asp:HyperLink>
+        </div>
+        
+        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+
+
+    </form>
+</body>
+</html>

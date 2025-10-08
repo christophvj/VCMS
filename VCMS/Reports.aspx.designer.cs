@@ -15,13 +15,13 @@ namespace VCMS
     {
 
         /// <summary>
-        /// form1 control.
+        /// lblPageHeading control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.WebControls.Label lblPageHeading;
 
         /// <summary>
         /// menuReports control.
@@ -51,6 +51,15 @@ namespace VCMS
         protected global::System.Web.UI.WebControls.View viewTopEvents;
 
         /// <summary>
+        /// pnlTopEvents control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlTopEvents;
+
+        /// <summary>
         /// gvTopEvents control.
         /// </summary>
         /// <remarks>
@@ -67,6 +76,15 @@ namespace VCMS
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.View viewVolunteersPerEvent;
+
+        /// <summary>
+        /// pnlVolunteers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlVolunteers;
 
         /// <summary>
         /// gvVolunteersPerEvent control.
@@ -87,6 +105,15 @@ namespace VCMS
         protected global::System.Web.UI.WebControls.View viewBeneficiariesPerEvent;
 
         /// <summary>
+        /// pnlBeneficiaries control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlBeneficiaries;
+
+        /// <summary>
         /// gvBeneficiariesPerEvent control.
         /// </summary>
         /// <remarks>
@@ -103,6 +130,15 @@ namespace VCMS
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.View viewTotalDonationsPerEvent;
+
+        /// <summary>
+        /// pnlDonations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlDonations;
 
         /// <summary>
         /// gvTotalDonationsPerEvent control.

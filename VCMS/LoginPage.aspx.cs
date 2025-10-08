@@ -13,6 +13,11 @@ namespace VCMS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                Session.Clear();
+                Session.Abandon();
+            }
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -28,8 +33,10 @@ namespace VCMS
                 Session["UserID"] = userId;
                 // Successful login
 
+                // Fetch roles from db
+                List<string> roles = dbLogin.GetUserRoles(userId);
                 Response.Write("<script>alert('Login successfull.');</script>");
-                Response.Redirect("CreateAccount.aspx"); // Redirect to the desired page after login
+                Response.Redirect("Main.aspx"); // Redirect to the desired page after login
             }
             else
             {
