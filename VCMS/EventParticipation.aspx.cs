@@ -12,18 +12,18 @@ namespace VCMS
     public partial class EventParticipation : System.Web.UI.Page
     {
         private DataBaseControls db = new DataBaseControls();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Wire deregister button to call back
-            btnDeregister.Click += btnDeregister_Click;
 
             //Enable selection on the events grid
-            gvEvents.AutoGenerateSelectButton = true;
+            //gvEvents.AutoGenerateSelectButton = true;
             gvEvents.DataKeyNames = new[] { "EventID" };
 
-            if (!IsPostBack) 
+            if (!IsPostBack)
             {
-                if (GetCurrentUserId() == 0) 
+                if (GetCurrentUserId() == 0)
                 {
                     //Session expired - Go back to login
                     Response.Redirect("LoginPage.aspx", endResponse: true);
@@ -35,17 +35,17 @@ namespace VCMS
             }
         }
 
-        private int GetCurrentUserId() 
+        private int GetCurrentUserId()
         {
             object id = Session["UserID"];
-            if(id==null) return 0;
+            if (id == null) return 0;
 
             int userId;
             return int.TryParse(id.ToString(), out userId) ? userId : 0;
         }
 
         //Populate Events Grid
-        private void BindEventsGrid() 
+        private void BindEventsGrid()
         {
             int userId = GetCurrentUserId();
             if (userId == 0) return;
@@ -58,7 +58,7 @@ namespace VCMS
                              ORDER BY e.StartDate DESC;";
 
             using (var conn = new SqlConnection(db.connectionString))
-            using (var da = new SqlDataAdapter(query, conn)) 
+            using (var da = new SqlDataAdapter(query, conn))
             {
                 da.SelectCommand.Parameters.AddWithValue("@UserID", userId);
                 var dt = new DataTable();
@@ -66,11 +66,10 @@ namespace VCMS
                 gvEvents.DataSource = dt;
                 gvEvents.DataBind();
             }
-                             
         }
 
         //Populate Donations Grid
-        private void BindDonationsGrid() 
+        private void BindDonationsGrid()
         {
             int userId = GetCurrentUserId();
             if (userId == 0) return;
@@ -92,13 +91,13 @@ namespace VCMS
             }
         }
 
-        protected void btnDeregister_Click(object sender, EventArgs e) 
+        protected void btnDeregister_Click(object sender, EventArgs e)
         {
             int userId = GetCurrentUserId();
 
             if (userId == 0)
             {
-                ClientScript.RegisterStartupScript(this.GetType(), "auth", "alert('your session expired. Please log in again');" ,true);
+                ClientScript.RegisterStartupScript(this.GetType(), "auth", "alert('your session expired. Please log in again');", true);
                 return;
             }
 
@@ -115,7 +114,7 @@ namespace VCMS
             try
             {
                 using (var conn = new SqlConnection(db.connectionString))
-                using (var cmd = new SqlCommand(deleteSql, conn)) 
+                using (var cmd = new SqlCommand(deleteSql, conn))
                 {
                     cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@EventID", eventId);
@@ -128,7 +127,7 @@ namespace VCMS
                     {
                         ClientScript.RegisterStartupScript(this.GetType(), "ok", "alert('You ahve been deregistered from the event.');", true);
                     }
-                    else 
+                    else
                     {
                         ClientScript.RegisterStartupScript(this.GetType(), "none", "alert('No registration found for the selcted event');", true);
                     }
@@ -144,6 +143,70 @@ namespace VCMS
             }
         }
 
+        /// <summary>
+        /// /////////////////////////////////////////////////////////////////////////////
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void gvEvents_RowEditing(object sender, GridViewEditEventArgs e)
+        {
+            gvEvents.EditIndex = e.NewEditIndex;
+            BindEventsGrid();
+        }
 
+        protected void gvEvents_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+        {
+            gvEvents.EditIndex = -1;
+            BindEventsGrid();
+        }
+
+        protected void gvEvents_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        {
+            int userId = GetCurrentUserId();
+            if (userId == 0) return;
+
+            int eventId = Convert.ToInt32(gvEvents.DataKeys[e.RowIndex].Value);
+            TextBox txtWorkHours = (TextBox)gvEvents.Rows[e.RowIndex].FindControl("txtWorkHours");
+            decimal workHours;
+            if (!decimal.TryParse(txtWorkHours.Text, out workHours) || workHours < 0)
+            {
+                // Optionally show error message
+                return;
+            }
+
+            string updateSql = "UPDATE User_On_Event SET WorkHours = @WorkHours WHERE UserID = @UserID AND EventID = @EventID";
+            using (var conn = new SqlConnection(db.connectionString))
+            using (var cmd = new SqlCommand(updateSql, conn))
+            {
+                cmd.Parameters.AddWithValue("@WorkHours", workHours);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.Parameters.AddWithValue("@EventID", eventId);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            gvEvents.EditIndex = -1;
+            BindEventsGrid();
+        }
+
+        protected void gvEvents_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            int userId = GetCurrentUserId();
+            if (userId == 0) return;
+
+            int eventId = Convert.ToInt32(gvEvents.DataKeys[e.RowIndex].Value);
+
+            string deleteSql = "DELETE FROM User_On_Event WHERE UserID = @UserID AND EventID = @EventID";
+            using (var conn = new SqlConnection(db.connectionString))
+            using (var cmd = new SqlCommand(deleteSql, conn))
+            {
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.Parameters.AddWithValue("@EventID", eventId);
+                conn.Open(); cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
+            }
+
+            BindEventsGrid();
+        }
     }
 }
