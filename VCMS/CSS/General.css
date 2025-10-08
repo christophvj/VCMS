@@ -1,0 +1,80 @@
+﻿body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #F5F7FA;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* NAV BAR */
+.navBar {
+    background-color: #004D40;
+    padding: 12px 20px;
+    display: flex;
+    gap: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.navLink {
+    color: white;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+    .navLink:hover {
+        background-color: #00796B;
+    }
+
+/* BUTTONS */
+.buttons {
+    background-color: #00796B;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+     .buttons:hover {
+           background-color: #005F56;
+           transform: scale(1.02);
+        }
+
+/* TEXTBOXES */
+.txtBoxes {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* LABELS */
+.lbl {
+    font-weight: bold;
+    color: #004D40;
+}
+
+/* CONTAINERS / CARD */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* FOOTER */
+.footer {
+    background-color: #004D40;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}

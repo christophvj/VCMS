@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -10,11 +11,6 @@ namespace VCMS
     {
         protected global::System.Web.UI.WebControls.GridView gvUsers;
         protected global::System.Web.UI.WebControls.GridView gvBeneficiaries;
-        protected global::System.Web.UI.WebControls.TextBox txtName;
-        protected global::System.Web.UI.WebControls.TextBox txtSurname;
-        protected global::System.Web.UI.WebControls.TextBox txtEmail;
-        protected global::System.Web.UI.WebControls.TextBox txtPhoneNumber;
-        protected global::System.Web.UI.WebControls.TextBox txtPassword;
         protected global::System.Web.UI.WebControls.TextBox txtBeneficiaryName;
         protected global::System.Web.UI.WebControls.TextBox txtAmountReceived;
 
@@ -59,9 +55,7 @@ namespace VCMS
         //Add New User
         protected void btnAddUser_Click(object sender, EventArgs e)
         {
-            db.CreateUser(txtName.Text, txtSurname.Text, txtEmail.Text, txtPhoneNumber.Text, txtPassword.Text);
-
-            LoadUsers();
+            Response.Redirect("CreateAccount.aspx");
         }
 
         //Delete User from GridView

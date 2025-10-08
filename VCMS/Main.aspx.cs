@@ -11,7 +11,29 @@ namespace VCMS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["UserID"] == null)
+            {
+                // Redirect to login page
+                Response.Redirect("LoginPage.aspx");
+                return;
+            }
 
+            if (!IsPostBack)
+            {
+                int userId = (int)(Session["UserID"]);
+
+                // Retreive user roles if not already in session
+                if (Session["UserRoles"] == null)
+                {
+                    DataBaseControls db = new DataBaseControls();
+
+                    // Get user roles and store in session 
+                    List<string> roles = db.GetUserRoles(userId);
+                    Session["UserRoles"] = roles;
+                }
+
+
+            }
         }
     }
 }

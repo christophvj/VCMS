@@ -107,6 +107,36 @@ namespace VCMS
         }
 
         /// <summary>
+        /// Get user Role when they log-in
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public List<string> GetUserRoles(int userId)
+        {
+            List<string> roles = new List<string>();
+            
+            using (SqlConnection conn =  new SqlConnection(connectionString))
+            {
+                string query = @"SELECT r.Name
+                                    FROM Role r
+                                    INNER JOIN User_Role ur ON r.RoleID = ur.RoleID
+                                    WHERE ur.UserID = @UserID";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    roles.Add(reader["Name"].ToString());
+                }
+            }
+
+            return roles;
+        }
+
+        /// <summary>
         /// Retrieves all events with their associated beneficiaries,
         /// excluding events the specified user is already registered for
         /// </summary>
