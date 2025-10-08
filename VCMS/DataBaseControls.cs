@@ -13,7 +13,7 @@ namespace VCMS
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        public string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=VCMS_DB;Integrated Security=True";
+        public string connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -142,7 +142,7 @@ namespace VCMS
                 {
                     da.SelectCommand.Parameters.AddWithValue("@UserID", userId);
                 }
-                
+
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 return dt;
@@ -310,7 +310,6 @@ namespace VCMS
             }
         }
 
-
         /// <summary>
         /// Returns the top 10 events with the highest number of volunteers
         /// </summary>
@@ -320,7 +319,7 @@ namespace VCMS
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"
-                    Select TOP 10 
+                    Select TOP 10
                         e.EventID,
                         e.Name AS EventName,
                         COUNT(uoe.UserID) AS VolunteerCount
@@ -335,7 +334,6 @@ namespace VCMS
                 return dt;
             }
         }
-
 
         /// <summary>
         /// Returns all events and the number of volunteers registered per event
@@ -361,7 +359,6 @@ namespace VCMS
                 return dt;
             }
         }
-
 
         /// <summary>
         /// Returns all events with a list of beneficiaries linked to each
