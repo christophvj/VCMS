@@ -17,6 +17,7 @@
     OnRowCancelingEdit="gvEvents_RowCancelingEdit"
     OnRowUpdating="gvEvents_RowUpdating"
     OnRowDeleting="gvEvents_RowDeleting"
+    OnRowDataBound="gvEvents_RowDataBound"
     CssClass="table table-striped">
     <Columns>
         <asp:BoundField DataField="EventID" HeaderText="ID" ReadOnly="True" />

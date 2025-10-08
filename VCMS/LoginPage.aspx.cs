@@ -35,8 +35,8 @@ namespace VCMS
 
                 // Fetch roles from db
                 List<string> roles = dbLogin.GetUserRoles(userId);
-                Response.Write("<script>alert('Login successfull.');</script>");
-                Response.Redirect("Main.aspx"); // Redirect to the desired page after login
+                string script = "alert('Login successful.'); window.location='Main.aspx';";
+                ClientScript.RegisterStartupScript(this.GetType(), "loginSuccess", script, true);
             }
             else
             {
@@ -44,7 +44,7 @@ namespace VCMS
                 RegularExpressionValidator1.Visible = true;
                 RegularExpressionValidator1.ForeColor = System.Drawing.Color.Red;
                 Label3.Text = "Invalid email or password.";
-                Response.Write("<script>alert('Login successfull.');</script>");
+                ClientScript.RegisterStartupScript(this.GetType(), "loginFail", "alert('Login unsuccessful. Wrong email or password.');", true);
             }
         }
     }

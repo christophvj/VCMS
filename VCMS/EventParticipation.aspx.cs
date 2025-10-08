@@ -208,5 +208,25 @@ namespace VCMS
 
             BindEventsGrid();
         }
+
+        protected void gvEvents_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                foreach (Control control in e.Row.Controls)
+                {
+                    if (control is DataControlFieldCell cell)
+                    {
+                        foreach (Control inner in cell.Controls)
+                        {
+                            if (inner is LinkButton btn && btn.CommandName == "Delete")
+                            {
+                                btn.OnClientClick = "return confirm('Are you sure you want to deregister from this event?');";
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
