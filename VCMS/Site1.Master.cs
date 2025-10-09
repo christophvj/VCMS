@@ -79,6 +79,7 @@ namespace VCMS
                 {
                     linkDonation.Visible = true;
                     linkRegisterEvent.Visible = true;
+                    linkEventParticipation.Visible = true;
                     linkUpdateUserInfo.Visible = true;
                     linkLogout.Visible = true;
                 }
