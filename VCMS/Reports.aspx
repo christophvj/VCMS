@@ -16,7 +16,7 @@
             <Items>
                 <asp:MenuItem Text="Top 10 Events" Value="0"></asp:MenuItem>
                 <asp:MenuItem Text="Volunteers Per Event" Value="1"></asp:MenuItem>
-                <asp:MenuItem Text="Beneficiaries Per Event" Value="2"></asp:MenuItem>
+                <asp:MenuItem Text="Events Per Beneficiarie" Value="2"></asp:MenuItem>
                 <asp:MenuItem Text="Total Donations Per Event" Value="3"></asp:MenuItem>
             </Items>
         </asp:Menu>
