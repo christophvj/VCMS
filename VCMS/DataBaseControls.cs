@@ -243,6 +243,7 @@ namespace VCMS
 
         /// <summary>
         /// Reacords a donation made by a user to a specific event.
+        /// Add donation amount to Beneficiary's received amount.
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="eventId"></param>
@@ -251,18 +252,58 @@ namespace VCMS
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = @"INSERT INTO Donation (UserID, EventID, Amount, Donation_Date)
-                               VALUES (@UserID, @EventID, @Amount, @DonationDate)";
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.Parameters.AddWithValue("@EventID", eventId);
-                    cmd.Parameters.AddWithValue("@Amount", amount);
-                    cmd.Parameters.AddWithValue("@DonationDate", DateTime.Now.Date);
+                    // Insert the donation record
+                    string insertQuery = @"INSERT INTO Donation (UserID, EventID, Amount, Donation_Date)
+                                   VALUES (@UserID, @EventID, @Amount, @DonationDate)";
+                    using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn, transaction))
+                    {
+                        insertCmd.Parameters.AddWithValue("@UserID", userId);
+                        insertCmd.Parameters.AddWithValue("@EventID", eventId);
+                        insertCmd.Parameters.AddWithValue("@Amount", amount);
+                        insertCmd.Parameters.AddWithValue("@DonationDate", DateTime.Now);
+                        insertCmd.ExecuteNonQuery();
+                    }
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                    // Get the beneficiary linked to this event
+                    string getBeneficiaryQuery = @"SELECT BeneficiaryID 
+                                           FROM Beneficiary_On_Event 
+                                           WHERE EventID = @EventID";
+                    int beneficiaryId;
+                    using (SqlCommand getBenCmd = new SqlCommand(getBeneficiaryQuery, conn, transaction))
+                    {
+                        getBenCmd.Parameters.AddWithValue("@EventID", eventId);
+                        object result = getBenCmd.ExecuteScalar();
+
+                        if (result == null)
+                            throw new Exception("No beneficiary found for this event.");
+
+                        beneficiaryId = Convert.ToInt32(result);
+                    }
+
+                    // Update the beneficiary’s received amount
+                    string updateBeneficiaryQuery = @"UPDATE Beneficiary
+                                              SET AmountReceived = AmountReceived + @Amount
+                                              WHERE BeneficiaryID = @BeneficiaryID";
+                    using (SqlCommand updateCmd = new SqlCommand(updateBeneficiaryQuery, conn, transaction))
+                    {
+                        updateCmd.Parameters.AddWithValue("@Amount", amount);
+                        updateCmd.Parameters.AddWithValue("@BeneficiaryID", beneficiaryId);
+                        updateCmd.ExecuteNonQuery();
+                    }
+
+                    // Commit if everything succeeded
+                    transaction.Commit();
+                }
+                catch
+                {
+                    // Roll back changes if anything fails
+                    transaction.Rollback();
+                    throw;
                 }
             }
         }
@@ -400,14 +441,14 @@ namespace VCMS
             {
                 string query = @"
                     SELECT
-                        e.EventID,
-                        e.Name AS EventName,
-                        STRING_AGG(b.Name, ',') AS Beneficiaries
-                    FROM Event e
-                    LEFT JOIN Beneficiary_On_Event be ON e.EventID = be.EventID
-                    LEFT JOIN Beneficiary b ON be.BeneficiaryID = b.BeneficiaryID
-                    GROUP BY e.EventID, e.Name
-                    ORDER BY e.Name;";
+                        b.BeneficiaryID,
+                        b.Name AS BeneficiaryName,
+                        STRING_AGG(e.Name, ', ') AS Events
+                    FROM Beneficiary b
+                    LEFT JOIN Beneficiary_On_Event be ON b.BeneficiaryID = be.BeneficiaryID
+                    LEFT JOIN Event e ON be.EventID = e.EventID
+                    GROUP BY b.BeneficiaryID, b.Name
+                    ORDER BY b.Name;";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
