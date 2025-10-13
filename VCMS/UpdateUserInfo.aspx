@@ -22,7 +22,7 @@
         <asp:TextBox ID="txtPhoneNum" runat="server" CssClass="txtBoxes"></asp:TextBox>
 
         <asp:Label ID="lblPassword" runat="server" Text="Password" CssClass="lbl"></asp:Label>
-        <asp:TextBox ID="txtPassword" runat="server" CssClass="txtBoxes"></asp:TextBox>
+        <asp:TextBox ID="txtPassword" runat="server" CssClass="txtBoxes"  ></asp:TextBox>
     </div>
 
     <div class="SaveBtn_Container">
@@ -36,13 +36,13 @@
 
     <div class="ChangePw_Container card">
         <asp:Label ID="lblOldPw" runat="server" Text="Current Password" CssClass="lbl"></asp:Label>
-        <asp:TextBox ID="txtOldPw" runat="server" CssClass="txtBoxes"></asp:TextBox>
+        <asp:TextBox ID="txtOldPw" runat="server" CssClass="txtBoxes" TextMode="Password"></asp:TextBox>
 
         <asp:Label ID="lblNewPw" runat="server" Text="New Password" CssClass="lbl"></asp:Label>
-        <asp:TextBox ID="txtNewPw" runat="server" CssClass="txtBoxes"></asp:TextBox>
+        <asp:TextBox ID="txtNewPw" runat="server" CssClass="txtBoxes" TextMode="Password"></asp:TextBox>
 
         <asp:Label ID="lblConfirmPw" runat="server" Text="Confirm Password" CssClass="lbl"></asp:Label>
-        <asp:TextBox ID="txtConfirmPw" runat="server" CssClass="txtBoxes"></asp:TextBox>
+        <asp:TextBox ID="txtConfirmPw" runat="server" CssClass="txtBoxes" ></asp:TextBox>
     </div>
 
     <div class="PwButton_Container">

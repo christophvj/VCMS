@@ -211,21 +211,71 @@ namespace VCMS
 
         protected void gvEvents_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (e.Row.RowType != DataControlRowType.DataRow)
             {
-                foreach (Control control in e.Row.Controls)
+                return;
+            }
+
+            DateTime endDate = Convert.ToDateTime(DataBinder.Eval(e.Row.DataItem, "EndDate"));
+            Object workHoursObj = DataBinder.Eval(e.Row.DataItem, "WorkHours");//Read from bound data
+            decimal workHoursDecimal = 0;
+
+            if (workHoursObj != DBNull.Value && workHoursObj != null)
+            {
+                decimal.TryParse(workHoursObj.ToString(), out workHoursDecimal);
+            }
+
+            LinkButton deregisterButton = null;
+            LinkButton editButton = null;
+
+            foreach (TableCell cell in e.Row.Cells)
+            {
+                foreach (Control ctrl in cell.Controls)
                 {
-                    if (control is DataControlFieldCell cell)
+                    if (ctrl is LinkButton lb)
                     {
-                        foreach (Control inner in cell.Controls)
-                        {
-                            if (inner is LinkButton btn && btn.CommandName == "Delete")
-                            {
-                                btn.OnClientClick = "return confirm('Are you sure you want to deregister from this event?');";
-                            }
-                        }
+                        if (lb.CommandName == "Delete")
+                            deregisterButton = lb;
+                        else if (lb.CommandName == "Edit")
+                            editButton = lb;
                     }
                 }
+            }
+
+            if (endDate < DateTime.Now)
+            {
+                if (deregisterButton != null)
+                {
+                    deregisterButton.Enabled = false;
+                    deregisterButton.ToolTip = "Cannot deregister from past events";
+                    deregisterButton.ForeColor = System.Drawing.Color.Gray;
+                    deregisterButton.OnClientClick = "";
+                }
+            }
+
+            if (workHoursDecimal > 0)
+            {
+                // Event has ended - disable edit
+                if (editButton != null)
+                {
+                    editButton.Enabled = false;
+                    editButton.ForeColor = System.Drawing.Color.Gray;
+                    editButton.ToolTip = "Cannot edit past events";
+                }
+
+                if (deregisterButton != null)
+                {
+                    deregisterButton.Enabled = false;
+                    deregisterButton.ToolTip = "Cannot deregister from past events";
+                    deregisterButton.ForeColor = System.Drawing.Color.Gray;
+                    deregisterButton.OnClientClick = "";
+                }
+                e.Row.ForeColor = System.Drawing.Color.Gray;
+                e.Row.BorderColor = System.Drawing.Color.LightGray;
+            }
+            if (deregisterButton != null && deregisterButton.Enabled)
+            {
+                deregisterButton.OnClientClick = "return confirm('Are you sure you want to deregister from this event?');";
             }
         }
     }

@@ -13,7 +13,7 @@ namespace VCMS
     internal class DataBaseControls
     {
         // Insert your connection string here.
-        public string connectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=VCMS_DB;Integrated Security=True";
+        public string connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
 
         /// <summary>
         /// Checks if a string is a valid SQL identifier (e.g., table or column name).
@@ -114,8 +114,8 @@ namespace VCMS
         public List<string> GetUserRoles(int userId)
         {
             List<string> roles = new List<string>();
-            
-            using (SqlConnection conn =  new SqlConnection(connectionString))
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"SELECT r.Name
                                     FROM Role r
@@ -270,8 +270,8 @@ namespace VCMS
                     }
 
                     // Get the beneficiary linked to this event
-                    string getBeneficiaryQuery = @"SELECT BeneficiaryID 
-                                           FROM Beneficiary_On_Event 
+                    string getBeneficiaryQuery = @"SELECT BeneficiaryID
+                                           FROM Beneficiary_On_Event
                                            WHERE EventID = @EventID";
                     int beneficiaryId;
                     using (SqlCommand getBenCmd = new SqlCommand(getBeneficiaryQuery, conn, transaction))
