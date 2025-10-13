@@ -56,6 +56,7 @@ namespace VCMS
                     linkManageUsers.Visible = true;
                     linkReports.Visible = true;
                     linkLogout.Visible = true;
+                    linkUpdateUserInfo.Visible = true;
                 }
                 if (roles.Contains("Donor"))
                 {
