@@ -22,29 +22,36 @@ namespace VCMS
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            string email = txtEmail.Text.Trim();
-            string password = txtPassword.Text.Trim();
-
-            DataBaseControls dbLogin = new DataBaseControls();
-            int userId = dbLogin.ValidateUserCredentials(email, password);
-
-            if (userId > 0)
+            try
             {
-                Session["UserID"] = userId;
-                // Successful login
+                string email = txtEmail.Text.Trim();
+                string password = txtPassword.Text.Trim();
 
-                // Fetch roles from db
-                List<string> roles = dbLogin.GetUserRoles(userId);
-                string script = "alert('Login successful.'); window.location='Main.aspx';";
-                ClientScript.RegisterStartupScript(this.GetType(), "loginSuccess", script, true);
+                DataBaseControls dbLogin = new DataBaseControls();
+                int userId = dbLogin.ValidateUserCredentials(email, password);
+
+                if (userId > 0)
+                {
+                    Session["UserID"] = userId;
+                    // Successful login
+
+                    // Fetch roles from db
+                    List<string> roles = dbLogin.GetUserRoles(userId);
+                    string script = "alert('Login successful.'); window.location='Main.aspx';";
+                    ClientScript.RegisterStartupScript(this.GetType(), "loginSuccess", script, true);
+                }
+                else
+                {
+                    // Invalid credentials
+                    RegularExpressionValidator1.Visible = true;
+                    RegularExpressionValidator1.ForeColor = System.Drawing.Color.Red;
+                    Label3.Text = "Invalid email or password.";
+                    ClientScript.RegisterStartupScript(this.GetType(), "loginFail", "alert('Login unsuccessful. Wrong email or password.');", true);
+                }
             }
-            else
+            catch(SqlException ex)
             {
-                // Invalid credentials
-                RegularExpressionValidator1.Visible = true;
-                RegularExpressionValidator1.ForeColor = System.Drawing.Color.Red;
-                Label3.Text = "Invalid email or password.";
-                ClientScript.RegisterStartupScript(this.GetType(), "loginFail", "alert('Login unsuccessful. Wrong email or password.');", true);
+                Response.Write("<script>alert('Database error: Check connection string " + ex.Message + "');</script>");
             }
         }
     }

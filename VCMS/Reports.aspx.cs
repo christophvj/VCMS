@@ -35,25 +35,32 @@ namespace VCMS
         // Handles menu item clicks
         protected void menuReports_MenuItemClick(object sender, MenuEventArgs e)
         {
-            // Get the value of the clicked menu item
-            int index = int.Parse(e.Item.Value);
-            mvReports.ActiveViewIndex = index;
-
-            // Load the corresponding data based on the clicked menu item
-            switch (index)
+            try
             {
-                case 0:
-                    loadTopEvents();
-                    break;
-                case 1:
-                    loadVolunteersPerEvent();
-                    break;
-                case 2:
-                    loadBeneficiariesPerEvent();
-                    break;
-                case 3:
-                    loadTotalDonationsPerEvent();
-                    break;
+                // Get the value of the clicked menu item
+                int index = int.Parse(e.Item.Value);
+                mvReports.ActiveViewIndex = index;
+
+                // Load the corresponding data based on the clicked menu item
+                switch (index)
+                {
+                    case 0:
+                        loadTopEvents();
+                        break;
+                    case 1:
+                        loadVolunteersPerEvent();
+                        break;
+                    case 2:
+                        loadBeneficiariesPerEvent();
+                        break;
+                    case 3:
+                        loadTotalDonationsPerEvent();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error loading report: " + ex.Message + "')</script>");
             }
         }
 
@@ -92,55 +99,62 @@ namespace VCMS
         // Exports the currently visible GridView to Excel
         protected void btnExportToExcel_Click(object sender, EventArgs e)
         {
-            GridView gv = null;
-
-            // Determine which GridView to export based on the active view
-            switch (mvReports.ActiveViewIndex)
+            try
             {
-                case 0:
-                    gv = gvTopEvents;
-                    break;
-                case 1:
-                    gv = gvVolunteersPerEvent;
-                    break;
-                case 2:
-                    gv = gvBeneficiariesPerEvent;
-                    break;
-                case 3:
-                    gv = gvTotalDonationsPerEvent;
-                    break;
-            }
+                GridView gv = null;
 
-            // Check if the GridView is selected and contains data
-            if (gv != null && gv.Rows.Count > 0)
-            {
-                Response.Clear();
-                Response.Buffer = true;
-
-                // Add a header to indicate this is a .xls file
-                Response.AddHeader("content-disposition", "attachment;filename=Report.xls");
-                Response.Charset = "";
-                Response.ContentType = "application/vnd.ms-excel";
-
-                // Use StringWriter and HtmlTextWriter to capture the GridView's HTML
-                using (StringWriter sw = new StringWriter())
-                using (HtmlTextWriter hw = new HtmlTextWriter(sw))
+                // Determine which GridView to export based on the active view
+                switch (mvReports.ActiveViewIndex)
                 {
-                    // Style Header row of excel
-                    gv.HeaderRow.Style.Add("background-color", "#FFFFFF");
-
-                    // Loop through each cell in the header row and apply background and foreground colors
-                    foreach (TableCell cell in gv.HeaderRow.Cells)
-                    {
-                        cell.Style.Add("background-color", "#00796B");
-                        cell.Style.Add("color", "#FFFFFF");
-                    }
-
-                    gv.RenderControl(hw);
-                    Response.Output.Write(sw.ToString());
-                    Response.Flush();
-                    Response.End();
+                    case 0:
+                        gv = gvTopEvents;
+                        break;
+                    case 1:
+                        gv = gvVolunteersPerEvent;
+                        break;
+                    case 2:
+                        gv = gvBeneficiariesPerEvent;
+                        break;
+                    case 3:
+                        gv = gvTotalDonationsPerEvent;
+                        break;
                 }
+
+                // Check if the GridView is selected and contains data
+                if (gv != null && gv.Rows.Count > 0)
+                {
+                    Response.Clear();
+                    Response.Buffer = true;
+
+                    // Add a header to indicate this is a .xls file
+                    Response.AddHeader("content-disposition", "attachment;filename=Report.xls");
+                    Response.Charset = "";
+                    Response.ContentType = "application/vnd.ms-excel";
+
+                    // Use StringWriter and HtmlTextWriter to capture the GridView's HTML
+                    using (StringWriter sw = new StringWriter())
+                    using (HtmlTextWriter hw = new HtmlTextWriter(sw))
+                    {
+                        // Style Header row of excel
+                        gv.HeaderRow.Style.Add("background-color", "#FFFFFF");
+
+                        // Loop through each cell in the header row and apply background and foreground colors
+                        foreach (TableCell cell in gv.HeaderRow.Cells)
+                        {
+                            cell.Style.Add("background-color", "#00796B");
+                            cell.Style.Add("color", "#FFFFFF");
+                        }
+
+                        gv.RenderControl(hw);
+                        Response.Output.Write(sw.ToString());
+                        Response.Flush();
+                        Response.End();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error exporting to Excel: " + ex.Message + "');</script>");
             }
         }
 

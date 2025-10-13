@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -46,34 +47,41 @@ namespace VCMS
 
         protected void btnSignUp_Click(object sender, EventArgs e)
         {
-            // Get user input
-            getUserInput();
-
-            string tableName = "Users";
-            string columnName = "Email";
-
-            // Validate User Account Existence
-            if (db.EntryExists(tableName, columnName, email))
+            try
             {
-                lblMessage.Visible = true;
-                lblMessage.ForeColor = System.Drawing.Color.Red;
-                lblMessage.Text = "An account with this email already exists.";
-                ClearInputFields();
-                return;
+                // Get user input
+                getUserInput();
+
+                string tableName = "Users";
+                string columnName = "Email";
+
+                // Validate User Account Existence
+                if (db.EntryExists(tableName, columnName, email))
+                {
+                    lblMessage.Visible = true;
+                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                    lblMessage.Text = "An account with this email already exists.";
+                    ClearInputFields();
+                    return;
+                }
+                else
+                {
+                    //Insert user input into the database
+                    db.CreateUser(name, surname, email, phoneNumber, password);
+
+                    //Success message
+                    lblMessage.Visible = true;
+                    lblMessage.ForeColor = System.Drawing.Color.Green;
+                    lblMessage.Text = "Account created successfully.";
+                    Response.Write("<script>alert('Account created successfully. Please log in.');</script>");
+                    Response.Redirect("~/LoginPage.aspx");
+
+                    ClearInputFields();
+                }
             }
-            else
+            catch(SqlException ex)
             {
-                //Insert user input into the database
-                db.CreateUser(name, surname, email, phoneNumber, password);
-
-                //Success message
-                lblMessage.Visible = true;
-                lblMessage.ForeColor = System.Drawing.Color.Green;
-                lblMessage.Text = "Account created successfully.";
-                Response.Write("<script>alert('Account created successfully. Please log in.');</script>");
-                Response.Redirect("~/LoginPage.aspx");
-
-                ClearInputFields();
+                Response.Write("<script>alert('Database error: " + ex.Message + "');</script>");
             }
         }
     }

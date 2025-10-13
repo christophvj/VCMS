@@ -47,36 +47,43 @@ namespace VCMS
 
         protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            DataBaseControls db = new DataBaseControls();
-            int eventId = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
-            string name = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtName")).Text;
-            string description = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtDescription")).Text;
-            string location = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtLocation")).Text;
-            DateTime startDate = Convert.ToDateTime(((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtStartDate")).Text);
-            DateTime endDate = Convert.ToDateTime(((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtEndDate")).Text);
-            // Validation: End date cannot be before start date
-            if (endDate < startDate)
+            try
             {
-                Response.Write("<script>alert('End date cannot be before start date.');</script>");
-                return;
-            }
+                DataBaseControls db = new DataBaseControls();
+                int eventId = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
+                string name = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtName")).Text;
+                string description = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtDescription")).Text;
+                string location = ((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtLocation")).Text;
+                DateTime startDate = Convert.ToDateTime(((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtStartDate")).Text);
+                DateTime endDate = Convert.ToDateTime(((TextBox)GridView1.Rows[e.RowIndex].FindControl("txtEndDate")).Text);
+                // Validation: End date cannot be before start date
+                if (endDate < startDate)
+                {
+                    Response.Write("<script>alert('End date cannot be before start date.');</script>");
+                    return;
+                }
 
-            using (SqlConnection con = new SqlConnection(db.connectionString))
-            {
-                string query = "UPDATE Event SET Name=@Name, Description=@Description, Location=@Location, StartDate=@StartDate, EndDate=@EndDate WHERE EventID=@EventID";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@EventID", eventId);
-                cmd.Parameters.AddWithValue("@Name", name);
-                cmd.Parameters.AddWithValue("@Description", description);
-                cmd.Parameters.AddWithValue("@Location", location);
-                cmd.Parameters.AddWithValue("@StartDate", startDate);
-                cmd.Parameters.AddWithValue("@EndDate", endDate);
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                using (SqlConnection con = new SqlConnection(db.connectionString))
+                {
+                    string query = "UPDATE Event SET Name=@Name, Description=@Description, Location=@Location, StartDate=@StartDate, EndDate=@EndDate WHERE EventID=@EventID";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@EventID", eventId);
+                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@Description", description);
+                    cmd.Parameters.AddWithValue("@Location", location);
+                    cmd.Parameters.AddWithValue("@StartDate", startDate);
+                    cmd.Parameters.AddWithValue("@EndDate", endDate);
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+                GridView1.EditIndex = -1;
+                BindGridView();
             }
-            GridView1.EditIndex = -1;
-            BindGridView();
+            catch (SqlException ex)
+            {
+                Response.Write("<script>alert('Error updating event: " + ex.Message + "');</script>");
+            }
         }
 
         protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -103,17 +110,24 @@ namespace VCMS
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            try
             {
-                LinkButton deleteButton = e.Row.Cells
-                    .OfType<TableCell>()
-                    .SelectMany(c => c.Controls.OfType<LinkButton>())
-                    .FirstOrDefault(lb => lb.CommandName == "Delete");
-
-                if (deleteButton != null)
+                if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    deleteButton.OnClientClick = "return confirm('Are you sure you want to delete this event? This will also delete all related records.');";
+                    LinkButton deleteButton = e.Row.Cells
+                        .OfType<TableCell>()
+                        .SelectMany(c => c.Controls.OfType<LinkButton>())
+                        .FirstOrDefault(lb => lb.CommandName == "Delete");
+
+                    if (deleteButton != null)
+                    {
+                        deleteButton.OnClientClick = "return confirm('Are you sure you want to delete this event? This will also delete all related records.');";
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error in row data binding: " + ex.Message + "');</script>");
             }
         }
 
