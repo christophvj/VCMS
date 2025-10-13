@@ -23,7 +23,6 @@ namespace VCMS
         }
 
         private DataBaseControls db = new DataBaseControls();
-        //private string db.connectionString = @"Data Source=LUAN;Initial Catalog=VCMS_DB;Integrated Security=True;TrustServerCertificate=True";
 
         private void PopulateBeneficiaryDropDown()
         {
@@ -128,35 +127,63 @@ namespace VCMS
 
         protected void cldrStartDate_DayRender(object sender, DayRenderEventArgs e)
         {
-            if (e.Day.Date < DateTime.Today)
+            try
             {
-                e.Day.IsSelectable = false;
-                e.Cell.ForeColor = System.Drawing.Color.Gray;
-                e.Cell.BackColor = System.Drawing.Color.LightGray;
+                if (e.Day.Date < DateTime.Today)
+                {
+                    e.Day.IsSelectable = false;
+                    e.Cell.ForeColor = System.Drawing.Color.Gray;
+                    e.Cell.BackColor = System.Drawing.Color.LightGray;
+                }
+            }
+            catch(Exception ex)
+            {
+                Response.Write("<script>alert('Error in calendar rendering: " + ex.Message + "');</script>");
             }
         }
 
         protected void cldrEndDate_DayRender(object sender, DayRenderEventArgs e)
         {
-            if (e.Day.Date < DateTime.Today)
+            try
             {
-                e.Day.IsSelectable = false;
-                e.Cell.ForeColor = System.Drawing.Color.Gray;
-                e.Cell.BackColor = System.Drawing.Color.LightGray;
+                if (e.Day.Date < DateTime.Today)
+                {
+                    e.Day.IsSelectable = false;
+                    e.Cell.ForeColor = System.Drawing.Color.Gray;
+                    e.Cell.BackColor = System.Drawing.Color.LightGray;
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error in calendar rendering: " + ex.Message + "');</script>");
             }
         }
 
         protected void cldrStartDate_SelectionChanged(object sender, EventArgs e)
         {
-            cldrEndDate.SelectedDate = cldrStartDate.SelectedDate;
-            cldrEndDate.VisibleDate = cldrStartDate.SelectedDate;
+            try
+            {
+                cldrEndDate.SelectedDate = cldrStartDate.SelectedDate;
+                cldrEndDate.VisibleDate = cldrStartDate.SelectedDate;
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error in start date selection: " + ex.Message + "');</script>");
+            }
         }
 
         protected void cldrEndDate_SelectionChanged(object sender, EventArgs e)
         {
-            if (cldrEndDate.SelectedDate < cldrStartDate.SelectedDate)
+            try
             {
-                cldrEndDate.SelectedDate = cldrStartDate.SelectedDate;
+                if (cldrEndDate.SelectedDate < cldrStartDate.SelectedDate)
+                {
+                    cldrEndDate.SelectedDate = cldrStartDate.SelectedDate;
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error in end date selection: " + ex.Message + "');</script>");
             }
         }
     }

@@ -34,7 +34,7 @@ GO
 -- ================================================
 INSERT INTO Users (Name, Surname, Email, PhoneNumber, Password)
 VALUES
-('Alice', 'Smith', 'alice.admin@example.com', '0711111111', 'admin123'),
+('Admin', 'Admin', 'admin@gmail.com', '0711111111', 'admin123'),
 ('Bob', 'Jones', 'bob.volunteer@example.com', '0722222222', 'vol123'),
 ('Charlie', 'Brown', 'charlie.donor@example.com', '0733333333', 'don123'),
 ('Diana', 'White', 'diana.both@example.com', '0744444444', 'both123'),

@@ -162,31 +162,38 @@ namespace VCMS
 
         protected void gvEvents_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            int userId = GetCurrentUserId();
-            if (userId == 0) return;
-
-            int eventId = Convert.ToInt32(gvEvents.DataKeys[e.RowIndex].Value);
-            TextBox txtWorkHours = (TextBox)gvEvents.Rows[e.RowIndex].FindControl("txtWorkHours");
-            decimal workHours;
-            if (!decimal.TryParse(txtWorkHours.Text, out workHours) || workHours < 0)
+            try
             {
-                // Optionally show error message
-                return;
-            }
+                int userId = GetCurrentUserId();
+                if (userId == 0) return;
 
-            string updateSql = "UPDATE User_On_Event SET WorkHours = @WorkHours WHERE UserID = @UserID AND EventID = @EventID";
-            using (var conn = new SqlConnection(db.connectionString))
-            using (var cmd = new SqlCommand(updateSql, conn))
+                int eventId = Convert.ToInt32(gvEvents.DataKeys[e.RowIndex].Value);
+                TextBox txtWorkHours = (TextBox)gvEvents.Rows[e.RowIndex].FindControl("txtWorkHours");
+                decimal workHours;
+                if (!decimal.TryParse(txtWorkHours.Text, out workHours) || workHours < 0)
+                {
+                    // Optionally show error message
+                    return;
+                }
+
+                string updateSql = "UPDATE User_On_Event SET WorkHours = @WorkHours WHERE UserID = @UserID AND EventID = @EventID";
+                using (var conn = new SqlConnection(db.connectionString))
+                using (var cmd = new SqlCommand(updateSql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@WorkHours", workHours);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@EventID", eventId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+
+                gvEvents.EditIndex = -1;
+                BindEventsGrid();
+            }
+            catch (SqlException ex)
             {
-                cmd.Parameters.AddWithValue("@WorkHours", workHours);
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.Parameters.AddWithValue("@EventID", eventId);
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                Response.Write("<script>alert('Error updating work hours: " + ex.Message.Replace("'", "\\'") + "');</script>");
             }
-
-            gvEvents.EditIndex = -1;
-            BindEventsGrid();
         }
 
         protected void gvEvents_RowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -211,71 +218,78 @@ namespace VCMS
 
         protected void gvEvents_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType != DataControlRowType.DataRow)
+            try
             {
-                return;
-            }
-
-            DateTime endDate = Convert.ToDateTime(DataBinder.Eval(e.Row.DataItem, "EndDate"));
-            Object workHoursObj = DataBinder.Eval(e.Row.DataItem, "WorkHours");//Read from bound data
-            decimal workHoursDecimal = 0;
-
-            if (workHoursObj != DBNull.Value && workHoursObj != null)
-            {
-                decimal.TryParse(workHoursObj.ToString(), out workHoursDecimal);
-            }
-
-            LinkButton deregisterButton = null;
-            LinkButton editButton = null;
-
-            foreach (TableCell cell in e.Row.Cells)
-            {
-                foreach (Control ctrl in cell.Controls)
+                if (e.Row.RowType != DataControlRowType.DataRow)
                 {
-                    if (ctrl is LinkButton lb)
+                    return;
+                }
+
+                DateTime endDate = Convert.ToDateTime(DataBinder.Eval(e.Row.DataItem, "EndDate"));
+                Object workHoursObj = DataBinder.Eval(e.Row.DataItem, "WorkHours");//Read from bound data
+                decimal workHoursDecimal = 0;
+
+                if (workHoursObj != DBNull.Value && workHoursObj != null)
+                {
+                    decimal.TryParse(workHoursObj.ToString(), out workHoursDecimal);
+                }
+
+                LinkButton deregisterButton = null;
+                LinkButton editButton = null;
+
+                foreach (TableCell cell in e.Row.Cells)
+                {
+                    foreach (Control ctrl in cell.Controls)
                     {
-                        if (lb.CommandName == "Delete")
-                            deregisterButton = lb;
-                        else if (lb.CommandName == "Edit")
-                            editButton = lb;
+                        if (ctrl is LinkButton lb)
+                        {
+                            if (lb.CommandName == "Delete")
+                                deregisterButton = lb;
+                            else if (lb.CommandName == "Edit")
+                                editButton = lb;
+                        }
                     }
                 }
-            }
 
-            if (endDate < DateTime.Now)
-            {
-                if (deregisterButton != null)
+                if (endDate < DateTime.Now)
                 {
-                    deregisterButton.Enabled = false;
-                    deregisterButton.ToolTip = "Cannot deregister from past events";
-                    deregisterButton.ForeColor = System.Drawing.Color.Gray;
-                    deregisterButton.OnClientClick = "";
-                }
-            }
-
-            if (workHoursDecimal > 0)
-            {
-                // Event has ended - disable edit
-                if (editButton != null)
-                {
-                    editButton.Enabled = false;
-                    editButton.ForeColor = System.Drawing.Color.Gray;
-                    editButton.ToolTip = "Cannot edit past events";
+                    if (deregisterButton != null)
+                    {
+                        deregisterButton.Enabled = false;
+                        deregisterButton.ToolTip = "Cannot deregister from past events";
+                        deregisterButton.ForeColor = System.Drawing.Color.Gray;
+                        deregisterButton.OnClientClick = "";
+                    }
                 }
 
-                if (deregisterButton != null)
+                if (workHoursDecimal > 0)
                 {
-                    deregisterButton.Enabled = false;
-                    deregisterButton.ToolTip = "Cannot deregister from past events";
-                    deregisterButton.ForeColor = System.Drawing.Color.Gray;
-                    deregisterButton.OnClientClick = "";
+                    // Event has ended - disable edit
+                    if (editButton != null)
+                    {
+                        editButton.Enabled = false;
+                        editButton.ForeColor = System.Drawing.Color.Gray;
+                        editButton.ToolTip = "Cannot edit past events";
+                    }
+
+                    if (deregisterButton != null)
+                    {
+                        deregisterButton.Enabled = false;
+                        deregisterButton.ToolTip = "Cannot deregister from past events";
+                        deregisterButton.ForeColor = System.Drawing.Color.Gray;
+                        deregisterButton.OnClientClick = "";
+                    }
+                    e.Row.ForeColor = System.Drawing.Color.Gray;
+                    e.Row.BorderColor = System.Drawing.Color.LightGray;
                 }
-                e.Row.ForeColor = System.Drawing.Color.Gray;
-                e.Row.BorderColor = System.Drawing.Color.LightGray;
+                if (deregisterButton != null && deregisterButton.Enabled)
+                {
+                    deregisterButton.OnClientClick = "return confirm('Are you sure you want to deregister from this event?');";
+                }
             }
-            if (deregisterButton != null && deregisterButton.Enabled)
+            catch (Exception ex)
             {
-                deregisterButton.OnClientClick = "return confirm('Are you sure you want to deregister from this event?');";
+                Response.Write("<script>alert('Error in row data binding: " + ex.Message.Replace("'", "\\'") + "');</script>");
             }
         }
     }

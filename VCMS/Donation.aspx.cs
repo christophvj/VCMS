@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -35,38 +36,45 @@ namespace VCMS
         // Handles the donation process when the Donate button is clicked
         protected void rptEvents_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (e.CommandName == "Donate")
+            try
             {
-                // Redirect to Login page if user is not authenticated
-                if (Session["UserID"] == null)
+                if (e.CommandName == "Donate")
                 {
-                    Response.Redirect("~/LoginPage.aspx");
-                    return;
-                }
-
-                int userId = Convert.ToInt32(Session["UserID"]);
-                int eventId = Convert.ToInt32(e.CommandArgument);
-
-                // Find the donation amount input within the repeater item
-                TextBox txtAmount = (TextBox)e.Item.FindControl("txtDonationAmount");
-                if (txtAmount != null && !string.IsNullOrEmpty(txtAmount.Text))
-                {
-                    decimal donationAmount;
-                    if (decimal.TryParse(txtAmount.Text, out donationAmount) && donationAmount > 0)
+                    // Redirect to Login page if user is not authenticated
+                    if (Session["UserID"] == null)
                     {
-                        // Store the donation in the database
-                        db.CreateDonation(userId, eventId, donationAmount);
-                        // Success message
-                        Response.Write("<script>alert('Thank you for your donation!');</script>");
-                        // Clear the input field
-                        txtAmount.Text = string.Empty;
+                        Response.Redirect("~/LoginPage.aspx");
+                        return;
                     }
-                    else
+
+                    int userId = Convert.ToInt32(Session["UserID"]);
+                    int eventId = Convert.ToInt32(e.CommandArgument);
+
+                    // Find the donation amount input within the repeater item
+                    TextBox txtAmount = (TextBox)e.Item.FindControl("txtDonationAmount");
+                    if (txtAmount != null && !string.IsNullOrEmpty(txtAmount.Text))
                     {
-                        // Handle invalid amount input
-                        Response.Write("<script>alert('Please enter a valid donation amount.');</script>");
+                        decimal donationAmount;
+                        if (decimal.TryParse(txtAmount.Text, out donationAmount) && donationAmount > 0)
+                        {
+                            // Store the donation in the database
+                            db.CreateDonation(userId, eventId, donationAmount);
+                            // Success message
+                            Response.Write("<script>alert('Thank you for your donation!');</script>");
+                            // Clear the input field
+                            txtAmount.Text = string.Empty;
+                        }
+                        else
+                        {
+                            // Handle invalid amount input
+                            Response.Write("<script>alert('Please enter a valid donation amount.');</script>");
+                        }
                     }
                 }
+            }
+            catch (SqlException ex)
+            {
+                Response.Write("<script>alert('An error occurred while processing your donation. Please try again later.'" + ex.Message + "');</script>");
             }
         }
     }

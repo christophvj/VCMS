@@ -22,7 +22,7 @@ Steps to Set Up the Database
   -Run the script to create the database and its tables.
 Choose one of the following options:
   -Option 1: Run DummyData.sql to populate the database with full dummy data.
-  -Option 2: Run AdminOnlyData.sql if you only want the default admin account without other test data.
+  -Option 2: Run Clean_Launch.sql if you only want the default admin account without other test data.
 
 Updating the Connection String
 -Before running the project, you must update the connection string in the DatabaseControls.cs file to match your local SQL Server instance.
@@ -38,7 +38,7 @@ Project Setup in Visual Studio
 
 Login Information
 Admin Account:
-  -Email: Admin@gmail.com
+  -Email: admin@gmail.com
   -Password: admin123
 Normal Users:
   -Can register directly through the system using the Sign-Up page.
