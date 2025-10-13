@@ -24,6 +24,11 @@ Choose one of the following options:
   -Option 1: Run DummyData.sql to populate the database with full dummy data.
   -Option 2: Run AdminOnlyData.sql if you only want the default admin account without other test data.
 
+Updating the Connection String
+-Before running the project, you must update the connection string in the DatabaseControls.cs file to match your local SQL Server instance.
+-Open the DatabaseControls.cs file in Visual Studio.
+-Locate the connection string line (it will look similar to this): string connectionString = @"Your Connection String";
+
 Project Setup in Visual Studio
   -Open Microsoft Visual Studio (latest version).
   -Open the VCMS project folder.
