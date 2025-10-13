@@ -11,17 +11,17 @@ namespace VCMS
 {
     public partial class UpdateUserInfo : System.Web.UI.Page
     {
-
         // Create DabaseControls object to access the database
-        DataBaseControls db = new DataBaseControls();
+        private DataBaseControls db = new DataBaseControls();
 
         // Account information
-        int userID;
-        string currName;
-        string currSurname;
-        string currEmail;
-        string currPhoneNum;
-        string currPassword;
+        private int userID;
+
+        private string currName;
+        private string currSurname;
+        private string currEmail;
+        private string currPhoneNum;
+        private string currPassword;
 
         public void getInformation()
         {
@@ -49,11 +49,13 @@ namespace VCMS
         {
             // Check if user is logged in
             if (Session["UserID"] == null)
-            {               
+            {
                 // Redirect to login page if not logged in
                 Response.Redirect("LoginPage.aspx");
                 return;
             }
+            txtPassword.Enabled = false; // Disable editing of password field
+            //txtPassword.TextMode = TextBoxMode.Password; // Mask password field
 
             userID = Convert.ToInt32(Session["UserID"]);
 
@@ -94,7 +96,7 @@ namespace VCMS
 
                 if (txtPhoneNum.Text != currPhoneNum)
                 {
-                    // Save new phone number to database 
+                    // Save new phone number to database
                     db.updateTableFieldValue("Users", userID, "PhoneNumber", txtPhoneNum.Text);
                 }
 
@@ -142,7 +144,6 @@ namespace VCMS
                 txtOldPw.Text = "";
                 txtNewPw.Text = "";
                 txtConfirmPw.Text = "";
-                
             }
             catch (SqlException ex)
             {

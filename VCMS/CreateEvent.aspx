@@ -37,15 +37,20 @@
         </div>
 
         <!-- Start Date -->
-        <div class="form-group calendar-group">
-            <asp:Label ID="Label4" runat="server" Text="Start Date:" CssClass="lbl"></asp:Label>
-            <asp:Calendar ID="cldrStartDate" runat="server" CssClass="calendar"></asp:Calendar>
-        </div>
+          <!-- Start Date -->
+          <div class="form-group calendar-group">
+              <asp:Label ID="Label4" runat="server" Text="Start Date:" CssClass="lbl"></asp:Label>
+              <asp:Calendar ID="cldrStartDate" runat="server" CssClass="calendar"
+                 OnSelectionChanged="cldrStartDate_SelectionChanged"
+               OnDayRender="cldrStartDate_DayRender" />
+             
+          </div>
+
 
         <!-- End Date -->
         <div class="form-group calendar-group">
             <asp:Label ID="Label5" runat="server" Text="End Date:" CssClass="lbl"></asp:Label>
-            <asp:Calendar ID="cldrEndDate" runat="server" CssClass="calendar"></asp:Calendar>
+            <asp:Calendar ID="cldrEndDate" runat="server" CssClass="calendar" OnSelectionChanged="cldrEndDate_SelectionChanged"></asp:Calendar>
         </div>
 
         <!-- Save Button -->

@@ -16,6 +16,8 @@ namespace VCMS
         {
             if (!IsPostBack)
             {
+                cldrStartDate.TodaysDate = DateTime.Today;
+                cldrStartDate.SelectedDate = DateTime.Today;
                 PopulateBeneficiaryDropDown();
             }
         }
@@ -73,6 +75,16 @@ namespace VCMS
                 Response.Write("<script>alert('Please fill in all required fields.');</script>");
                 return;
             }
+            if (startDate > endDate)
+            {
+                Response.Write("<script>alert('Start date cannot be after end date.');</script>");
+                return;
+            }
+            if (startDate < DateTime.Today)
+            {
+                Response.Write("<script>alert('Start date cannot be in the past.');</script>");
+                return;
+            }
 
             try
             {   //Store event information in Event table
@@ -111,6 +123,40 @@ namespace VCMS
             {
                 Response.Write("<script>alert('Error creating event.');</script>" + ex.ToString());
                 return;
+            }
+        }
+
+        protected void cldrStartDate_DayRender(object sender, DayRenderEventArgs e)
+        {
+            if (e.Day.Date < DateTime.Today)
+            {
+                e.Day.IsSelectable = false;
+                e.Cell.ForeColor = System.Drawing.Color.Gray;
+                e.Cell.BackColor = System.Drawing.Color.LightGray;
+            }
+        }
+
+        protected void cldrEndDate_DayRender(object sender, DayRenderEventArgs e)
+        {
+            if (e.Day.Date < DateTime.Today)
+            {
+                e.Day.IsSelectable = false;
+                e.Cell.ForeColor = System.Drawing.Color.Gray;
+                e.Cell.BackColor = System.Drawing.Color.LightGray;
+            }
+        }
+
+        protected void cldrStartDate_SelectionChanged(object sender, EventArgs e)
+        {
+            cldrEndDate.SelectedDate = cldrStartDate.SelectedDate;
+            cldrEndDate.VisibleDate = cldrStartDate.SelectedDate;
+        }
+
+        protected void cldrEndDate_SelectionChanged(object sender, EventArgs e)
+        {
+            if (cldrEndDate.SelectedDate < cldrStartDate.SelectedDate)
+            {
+                cldrEndDate.SelectedDate = cldrStartDate.SelectedDate;
             }
         }
     }
